@@ -12,6 +12,7 @@ class App extends React.Component {
       selectedBasics: [],
       selectedIngredients: []
     }
+    this.getRecipes = this.getRecipes.bind(this);
   }
 
   componentDidMount() {
@@ -43,15 +44,15 @@ class App extends React.Component {
     }, 2000);
   }
 
-  clicky(e) {
-    console.log('get clicked');
-    let basics = [];
-
-    // $('select.MultiBasics').children('option:selected');
-    console.log(basics);
-    // basics.forEach((item) => {
-    //   console.log(item.val());
-    // });
+  getRecipes(e) {
+    let data = this.state;
+    $.post({
+      url: '/getRecipes',
+      method: 'POST',
+      data
+    }, (response) => {
+      console.log('whats up', response);
+    })
   }
 
   itemChange(e) {
@@ -86,7 +87,7 @@ class App extends React.Component {
         <List onItemChange={this.itemChange.bind(this)} listName="Basics" items={this.state.basics}/>
       </div>
       <div>
-        <button onClick={this.clicky}><h1>Submit</h1></button>
+        <button onClick={this.getRecipes}><h1>Submit</h1></button>
       </div>
     </div>)
   }
