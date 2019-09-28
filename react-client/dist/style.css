@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  border: 1px solid blue;
+}
+
+.list {
+  border: 2px solid green;
+}
+
+select {
+  min-height: 400px;
+}

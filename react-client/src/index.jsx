@@ -6,14 +6,17 @@ import List from './components/List.jsx';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      items: []
+    this.state = {
+      items: [],
+      basics: [],
+      selectedBasics: [],
+      selectedIngredients: []
     }
   }
 
   componentDidMount() {
     $.ajax({
-      url: '/items', 
+      url: '/items',
       success: (data) => {
         this.setState({
           items: data
@@ -23,12 +26,68 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
+    $.ajax({
+      url: '/basics',
+      success: (data) => {
+        this.setState({
+          basics: data
+        })
+      },
+      error: (err) => {
+        console.log('err', err);
+      }
+    });
+    setInterval(() => {
+      console.log(`Current selection of basics:     `, this.state.selectedBasics);
+      console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
+    }, 2000);
+  }
+
+  clicky(e) {
+    console.log('get clicked');
+    let basics = [];
+
+    // $('select.MultiBasics').children('option:selected');
+    console.log(basics);
+    // basics.forEach((item) => {
+    //   console.log(item.val());
+    // });
+  }
+
+  itemChange(e) {
+    var options = e.target.options;
+    var value = [];
+    for (var i = 0, l = options.length; i < l; i++) {
+      if (options[i].selected) {
+        value.push(Number(options[i].value));
+      }
+    }
+    console.log(e.target.getAttribute('class'))
+    if (e.target.getAttribute('class') === 'MultiBasics'){
+      // console.log('changing selection for MultiBasics');
+      this.setState({
+        selectedBasics: value
+      });
+    } else if (e.target.getAttribute('class') === 'MultiIngredients'){
+      // console.log('changing selection for MultiBasics');
+      this.setState({
+        selectedIngredients: value
+      });
+    }
   }
 
   render () {
-    return (<div>
-      <h1>Item List</h1>
-      <List items={this.state.items}/>
+    return (
+    <div className="container">
+      <div>
+        <List onItemChange={this.itemChange.bind(this)} listName="Ingredients" items={this.state.items}/>
+      </div>
+      <div>
+        <List onItemChange={this.itemChange.bind(this)} listName="Basics" items={this.state.basics}/>
+      </div>
+      <div>
+        <button onClick={this.clicky}><h1>Submit</h1></button>
+      </div>
     </div>)
   }
 }
