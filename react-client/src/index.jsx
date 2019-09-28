@@ -38,14 +38,14 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
-    setInterval(() => {
-      console.log(`Current selection of basics:     `, this.state.selectedBasics);
-      console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
-    }, 2000);
+    // setInterval(() => {
+    //   console.log(`Current selection of basics:     `, this.state.selectedBasics);
+    //   console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
+    // }, 2000);
   }
 
   getRecipes(e) {
-    let data = this.state;
+    let data = { ingList: this.state.selectedIngredients };
     $.post({
       url: '/getRecipes',
       method: 'POST',

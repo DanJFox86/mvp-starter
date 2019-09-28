@@ -26,7 +26,21 @@ var selectBasics = function(callback) {
   });
 };
 
+var findRecipes = (ingList, callback) => {
+  console.log(ingList);
+  connection.query('SELECT ingredients.name, ingredients.id FROM basics, ingredients where basics.ingredient_id = ingredients.id;', function(err, results, fields) {
+    if(err) {
+      callback(err, null);
+    } else {
+      callback(null, results);
+    }
+  });
+};
+
+
+
 module.exports = { selectAll,
                    selectBasics,
+                   findRecipes,
                    connection
 };
