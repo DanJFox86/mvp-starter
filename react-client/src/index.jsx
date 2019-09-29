@@ -10,7 +10,8 @@ class App extends React.Component {
       items: [],
       basics: [],
       selectedBasics: [],
-      selectedIngredients: []
+      selectedIngredients: [],
+      possibleRecipes: []
     }
     this.getRecipes = this.getRecipes.bind(this);
   }
@@ -49,10 +50,14 @@ class App extends React.Component {
     $.post({
       url: '/getRecipes',
       method: 'POST',
-      data
-    }, (response) => {
-      console.log('whats up', response);
-    })
+      data,
+      success: (response) => {
+        this.setState({
+          possibleRecipes: response
+        });
+        console.log('whats up', response);
+      }
+    });
   }
 
   itemChange(e) {
