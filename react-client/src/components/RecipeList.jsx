@@ -10,9 +10,10 @@ class RecipeList extends React.Component {
   render () {
     console.log(this.props.recipes);
 
-    let recipes = this.props.recipes.map((recipe) => (
-      <Recipe recipe={recipe} />
-    ));
+    let recipes = this.props.recipes.length > 0 ? this.props.recipes.map((recipe) => (
+      <Recipe selected={this.props.selected}
+                 recipe={recipe} />
+    )) : 'No recipes available';
 
     return (
       <div className="recipeList">

@@ -10,14 +10,24 @@ class Recipe extends React.Component {
   render() {
 
     let { recipe_name, ingredients } = this.props.recipe;
+    // console.log(`Ingredients that are on hand:     `, this.props.selected);
+
+    ingredients = ingredients.map((ingredient) => {
+      console.log(this.props.selected.indexOf(ingredient.name) > -1);
+      console.log(ingredient.name);
+      let className = `ingredient${this.props.selected.includes(ingredient.name) ? '-present' : ''}`
+      return (<div className={className}>{ingredient.name}</div>)
+    });
+
+
     console.log(`Creating recipe DOM object for:       `, this.props.recipe);
     return (
       <div className="recipe">
         <div className="recipe-name">
-          {recipe_name}
+          <em>{recipe_name}</em>
         </div>
         <div className="recipe-ingredients">
-          {JSON.stringify(ingredients)}
+          {ingredients}
         </div>
       </div>
     );

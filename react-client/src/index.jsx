@@ -88,21 +88,32 @@ class App extends React.Component {
   }
 
   render () {
+    let selectedIngredients = this.state.selectedIngredients.map((ingredient) => {
+      return ingredient.name;
+    });
     return (
-    <div className="container">
       <div>
-        <List onItemChange={this.itemChange.bind(this)} listName="Ingredients" items={this.state.items}/>
-      </div>
-      <div>
-        <List onItemChange={this.itemChange.bind(this)} listName="Basics" items={this.state.basics}/>
-      </div>
-      <div>
-        <button onClick={this.getRecipes}><h1>Submit</h1></button>
-      </div>
-      <div>
-        <Recipes recipes={this.state.possibleRecipes} />
-      </div>
-    </div>)
+        <img src="logo.png"></img>
+        <div className="container">
+          <div>
+            <List onItemChange={this.itemChange.bind(this)}
+                      listName="Ingredients"
+                        items={this.state.items}/>
+          </div>
+          {/* <div>
+            <List onItemChange={this.itemChange.bind(this)}
+                      listName="Basics"
+                        items={this.state.basics}/>
+          </div> */}
+          <div>
+            <button onClick={this.getRecipes}><h1>Find Recipes!   -></h1></button>
+          </div>
+          <div className="recipeLists">
+            <Recipes recipes={this.state.possibleRecipes}
+                    selected={selectedIngredients}/>
+          </div>
+        </div>
+      </div>)
   }
 }
 

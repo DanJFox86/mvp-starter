@@ -11,13 +11,16 @@ class Recipes extends React.Component {
     return (
       <div className="recipes">
         <div className="all"> ALL
-          <RecipeList recipes={this.props.recipes.all} />
+          <RecipeList selected={this.props.selected}
+                       recipes={this.props.recipes.all} />
         </div>
         <div className="most"> MOST
-          <RecipeList recipes={this.props.recipes.most} />
+          <RecipeList  selected={this.props.selected}
+                        recipes={this.props.recipes.most} />
         </div>
         <div className="some"> SOME
-          <RecipeList recipes={this.props.recipes.some} />
+          <RecipeList  selected={this.props.selected}
+                        recipes={this.props.recipes.some} />
         </div>
       </div>)
   }
