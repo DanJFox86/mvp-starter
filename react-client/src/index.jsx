@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import List from './components/List.jsx';
+import Recipes from './components/Recipes.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -43,10 +44,10 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
-    setInterval(() => {
-      console.log(`Current possible recipes:     `, this.state.possibleRecipes);
-      // console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
-    }, 2000);
+    // setInterval(() => {
+    //   console.log(`Current possible recipes:     `, this.state.possibleRecipes);
+    //   // console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
+    // }, 2000);
   }
 
   getRecipes(e) {
@@ -59,8 +60,6 @@ class App extends React.Component {
         this.setState({
           possibleRecipes
         });
-        console.log('whats up', possibleRecipes);
-
       }
     });
   }
@@ -75,8 +74,6 @@ class App extends React.Component {
                           });
       }
     }
-    console.log(value)
-    console.log(e.target.getAttribute('class'))
     if (e.target.getAttribute('class') === 'MultiBasics'){
       // console.log('changing selection for MultiBasics');
       this.setState({
@@ -101,6 +98,9 @@ class App extends React.Component {
       </div>
       <div>
         <button onClick={this.getRecipes}><h1>Submit</h1></button>
+      </div>
+      <div>
+        <Recipes recipes={this.state.possibleRecipes} />
       </div>
     </div>)
   }

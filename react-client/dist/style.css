@@ -10,3 +10,30 @@
 select {
   min-height: 400px;
 }
+
+.recipes {
+  border: 3px solid red;
+  min-height: 300px;
+  min-width: 100px;
+}
+
+.recipe {
+  border: 1px solid purple;
+}
+
+.all {
+  padding: 5px;
+  border: 1px dashed green;
+}
+
+
+.most {
+  padding: 5px;
+  border: 1px dashed orange;
+}
+
+
+.some {
+  padding: 5px;
+  border: 1px dashed red;
+}

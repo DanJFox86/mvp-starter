@@ -111,11 +111,19 @@ const recipeInfoSort = (recipeInfo, ingList, callback) => {
     if (haveIngPercentage === 1) {
       sortedRecipes.all.push(recipe);
     } else if (haveIngPercentage >= .5) {
+      recipe.haveIngPercentage = haveIngPercentage;
       sortedRecipes.most.push(recipe);
     } else {
       sortedRecipes.some.push(recipe);
     }
   });
+  sortedRecipes.most.sort((a, b) => {
+    return b.haveIngPercentage - a.haveIngPercentage;
+  });
+  sortedRecipes.some.sort((a, b) => {
+    return b.haveIngPercentage - a.haveIngPercentage;
+  });
+  // console.log(sortedRecipes);
   callback(null, sortedRecipes);
 }
 
