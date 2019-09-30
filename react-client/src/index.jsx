@@ -11,7 +11,11 @@ class App extends React.Component {
       basics: [],
       selectedBasics: [],
       selectedIngredients: [],
-      possibleRecipes: []
+      possibleRecipes: {
+        all: [],
+        most: [],
+        some: []
+      }
     }
     this.getRecipes = this.getRecipes.bind(this);
   }
@@ -39,10 +43,10 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
-    // setInterval(() => {
-    //   console.log(`Current selection of basics:     `, this.state.selectedBasics);
-    //   console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
-    // }, 2000);
+    setInterval(() => {
+      console.log(`Current possible recipes:     `, this.state.possibleRecipes);
+      // console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
+    }, 2000);
   }
 
   getRecipes(e) {
@@ -51,11 +55,12 @@ class App extends React.Component {
       url: '/getRecipes',
       method: 'POST',
       data,
-      success: (response) => {
+      success: (possibleRecipes) => {
         this.setState({
-          possibleRecipes: response
+          possibleRecipes
         });
-        console.log('whats up', response);
+        console.log('whats up', possibleRecipes);
+
       }
     });
   }
@@ -65,9 +70,12 @@ class App extends React.Component {
     var value = [];
     for (var i = 0, l = options.length; i < l; i++) {
       if (options[i].selected) {
-        value.push(Number(options[i].value));
+        value.push({ id: Number(options[i].value),
+                            name: options[i].text
+                          });
       }
     }
+    console.log(value)
     console.log(e.target.getAttribute('class'))
     if (e.target.getAttribute('class') === 'MultiBasics'){
       // console.log('changing selection for MultiBasics');

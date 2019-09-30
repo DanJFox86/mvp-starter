@@ -33,9 +33,12 @@ var findRecipes = (ingList, callback) => {
   // Firstly, find recipes that can be solely made from the ingredients that have been selected
   // If no recipes exist that consist solely of the selected ingredients, find recipes that have the fewest additional ingredients necessary, prioritizing basic ingredients first
   let ingQuery = [];
+  let ingNameQuery = [];
   ingList.forEach((ing) => {
-    ingQuery.push(`ingredient_id = ${Number(ing)}`);
+    ingQuery.push(`ingredient_id = ${Number(ing.id)}`);
+    ingNameQuery.push(`name=${(ing.name)}`);
   });
+  // console.log(`Names of selected ingredients:     `, ingNameQuery);
 
   let query = `SELECT recipe_id FROM ingredientRecipeJoin WHERE ${ingQuery.join(' OR ')}`;
   // console.log(query);
@@ -46,12 +49,11 @@ var findRecipes = (ingList, callback) => {
       let resultIds = results.map((result) => {
         return result.recipe_id;
       });
-      let uniqueResults = _.uniq(resultIds);
+      resultIds = _.uniq(resultIds);
       let recipeIdQuery = [];
-      uniqueResults.forEach((id) => {
+      resultIds.forEach((id) => {
         recipeIdQuery.push(`ID=${id}`);
       });
-      console.log(recipeIdQuery.join(' OR '));
       let newQuery = `SELECT * FROM recipes WHERE ${recipeIdQuery.join(' OR ')};`;
       connection.query(newQuery, (err, results) => { // Gets recipe info and sends to client
         if (err) {
@@ -75,15 +77,47 @@ var findRecipes = (ingList, callback) => {
             }));
           });
           Promise.all(list)
-            .then((sldkjsldkfj) => {
-              console.log(sldkjsldkfj);
-              callback(null, sldkjsldkfj);
-            })
+            .then((recipeInfo) => {
+              recipeInfoSort(recipeInfo, ingList, callback);
+            });
         }
       });
     }
   });
 };
+
+const recipeInfoSort = (recipeInfo, ingList, callback) => {
+  // console.log(recipeInfo);
+  let sortedRecipes = {
+    all: [],
+    most: [],
+    some: []
+  };
+  let ingredientNames = ingList.map((ing) => {
+    return ing.name;
+  });
+  // console.log(ingredientNames);
+  recipeInfo.forEach((recipe) => {
+    let ingTotal = recipe.ingredients.length;
+    let ingHaz = 0;
+    recipe.ingredients.forEach((ing) => {
+      // console.log(ing);
+      if (ingredientNames.includes(ing.name)) {
+        ingHaz++;
+      }
+    });
+    let haveIngPercentage = ingHaz / ingTotal;
+    // console.log(haveIngPercentage)
+    if (haveIngPercentage === 1) {
+      sortedRecipes.all.push(recipe);
+    } else if (haveIngPercentage >= .5) {
+      sortedRecipes.most.push(recipe);
+    } else {
+      sortedRecipes.some.push(recipe);
+    }
+  });
+  callback(null, sortedRecipes);
+}
 
 
 

@@ -62,7 +62,7 @@ Once the project moves into development, the press release can be used as a touc
 ## Customer Quote ##
   > Provide a quote from a hypothetical customer that describes how they experienced the benefit.
 
-  "I enjoy cooking but something always happens that mess up my plans. Sometimes that tomato that should have been good for a couple days goes bad sooner than I expected, or I accidentally grabbed nutmeg instead of paprika at the store. I have 5 nutmegs in my pantry! So frustrating, I just want to cook a nice little meal! Re-Fridgerator-Ducer has helped me tremendously! No need for me to get stressed out when a little bump messes up my plans, changing course on the fly to another recipe has never been easier!"
+  "I enjoy cooking but something always happens that messes up my plans. Sometimes that tomato that should have been good for a couple days goes bad sooner than I expected, or I accidentally grabbed nutmeg instead of paprika at the store. I have 8 nutmegs in my pantry! So frustrating, I just want to cook a nice little meal! Re-Fridgerator-Ducer has helped me tremendously! No need for me to get stressed out when a little bump messes up my plans, changing course on the fly to another recipe has never been easier!"
 
 ## Closing and Call to Action ##
   > Wrap it up and give pointers where the reader should go next.
