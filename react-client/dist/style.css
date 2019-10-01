@@ -55,13 +55,13 @@ select {
   margin: 250px 5px 0px 5px;
 }
 
-.recipe-check {
-
-}
-
-
 .recipe {
   border: 1px solid purple;
+  margin: 5px;
+}
+
+.recipe-selected {
+  border: 1px solid green;
   margin: 5px;
 }
 
