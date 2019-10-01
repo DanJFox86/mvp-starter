@@ -9,7 +9,7 @@ class Recipe extends React.Component {
 
   render() {
 
-    let { recipe_name, ingredients } = this.props.recipe;
+    let { recipe_id, recipe_name, ingredients } = this.props.recipe;
     // console.log(`Ingredients that are on hand:     `, this.props.selected);
 
     ingredients = ingredients.map((ingredient) => {
@@ -23,8 +23,13 @@ class Recipe extends React.Component {
     // console.log(`Creating recipe DOM object for:       `, this.props.recipe);
     return (
       <div className="recipe">
-        <div className="recipe-name">
-          <em>{recipe_name}</em>
+        <div className="recipe-top">
+          <div className="recipe-name">
+            <em>{recipe_name}</em>
+          </div>
+          <button className="recipe-check"
+                    onClick={this.props.toggleRecipe}
+                    id={recipe_id}>+</button>
         </div>
         <div className="recipe-ingredients">
           {ingredients}

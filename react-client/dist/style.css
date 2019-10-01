@@ -47,8 +47,16 @@ select {
   min-height: 400px;
 }
 
-button {
+.recipe-top {
+  display: flex;
+}
+
+.get-recipe-button {
   margin: 250px 5px 0px 5px;
+}
+
+.recipe-check {
+
 }
 
 

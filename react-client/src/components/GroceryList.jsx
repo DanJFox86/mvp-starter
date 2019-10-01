@@ -1,5 +1,5 @@
 import React from 'react';
-import Recipe from './Recipe.jsx';
+import ListItem from './ListItem.jsx';
 
 class GroceryList extends React.Component {
 
@@ -8,15 +8,15 @@ class GroceryList extends React.Component {
   }
 
   render () {
-    console.log(this.props.recipes);
+    // console.log(this.props.list);
 
-    let recipes = this.props.recipes.length > 0 ? this.props.recipes.map((recipe) => (
-      <ListItem recipe={recipe} />
-    )) : 'No recipes available';
+    let groceryList = this.props.list.length > 0 ? this.props.list.map((item) => (
+      <ListItem item={item} />
+    )) : 'No grocery list available';
 
     return (
       <div className="groceryList">
-        {recipes}
+        {groceryList}
       </div>
 
     );

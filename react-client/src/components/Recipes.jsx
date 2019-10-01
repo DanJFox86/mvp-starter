@@ -7,20 +7,23 @@ class Recipes extends React.Component {
     super(props);
   }
   render() {
-    console.log(`Most recipes:    `, this.props.recipes.most);
+    // console.log(`Most recipes:    `, this.props.recipes.most);
     return (
       <div className="recipes">
         <div className="all"> ALL
           <RecipeList selected={this.props.selected}
-                       recipes={this.props.recipes.all} />
+                       recipes={this.props.recipes.all}
+                  toggleRecipe={this.props.toggleRecipe} />
         </div>
         <div className="most"> MOST
           <RecipeList  selected={this.props.selected}
-                        recipes={this.props.recipes.most} />
+                        recipes={this.props.recipes.most}
+                   toggleRecipe={this.props.toggleRecipe} />
         </div>
         <div className="some"> SOME
           <RecipeList  selected={this.props.selected}
-                        recipes={this.props.recipes.some} />
+                        recipes={this.props.recipes.some}
+                   toggleRecipe={this.props.toggleRecipe} />
         </div>
       </div>)
   }
