@@ -11,6 +11,9 @@ class Recipe extends React.Component {
 
     let { recipe_id, recipe_name, ingredients, isSelected } = this.props.recipe;
     // console.log(`Ingredients that are on hand:     `, this.props.selected);
+    let button = this.props.listName !== 'all' ? (<button className="recipe-check"
+                                                 onClick={this.props.toggleRecipe}
+                                                      id={recipe_id}>{isSelected ? "-" : "+"}</button>) : '';
 
     ingredients = ingredients.map((ingredient) => {
       // console.log(this.props.selected.indexOf(ingredient.name) > -1);
@@ -27,9 +30,7 @@ class Recipe extends React.Component {
           <div className="recipe-name">
             <b>{recipe_name}</b>
           </div>
-          <button className="recipe-check"
-                    onClick={this.props.toggleRecipe}
-                    id={recipe_id}>{isSelected ? "-" : "+"}</button>
+          {button}
         </div>
         <div className="recipe-ingredients">
           {ingredients}

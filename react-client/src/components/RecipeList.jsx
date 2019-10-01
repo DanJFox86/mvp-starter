@@ -13,7 +13,8 @@ class RecipeList extends React.Component {
     let recipes = this.props.recipes.length > 0 ? this.props.recipes.map((recipe) => (
       <Recipe selected={this.props.selected}
                 recipe={recipe}
-          toggleRecipe={this.props.toggleRecipe} />
+          toggleRecipe={this.props.toggleRecipe}
+              listName={this.props.listName} />
     )) : 'No recipes available';
 
     return (

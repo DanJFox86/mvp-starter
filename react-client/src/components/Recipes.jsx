@@ -13,17 +13,20 @@ class Recipes extends React.Component {
         <div className="all"> ALL
           <RecipeList selected={this.props.selected}
                        recipes={this.props.recipes.all}
-                  toggleRecipe={this.props.toggleRecipe} />
+                  toggleRecipe={this.props.toggleRecipe}
+                      listName="all" />
         </div>
         <div className="most"> MOST
           <RecipeList  selected={this.props.selected}
                         recipes={this.props.recipes.most}
-                   toggleRecipe={this.props.toggleRecipe} />
+                   toggleRecipe={this.props.toggleRecipe}
+                       listName="most" />
         </div>
         <div className="some"> SOME
           <RecipeList  selected={this.props.selected}
                         recipes={this.props.recipes.some}
-                   toggleRecipe={this.props.toggleRecipe} />
+                   toggleRecipe={this.props.toggleRecipe}
+                       listName="some" />
         </div>
       </div>)
   }

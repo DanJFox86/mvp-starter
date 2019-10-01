@@ -17,7 +17,7 @@ class GroceryList extends React.Component {
     return (
       <div className="groceryList">
         <div>GROCERY LIST</div>
-        <textarea rows={Math.min(20, groceryList.length)} value={typeof groceryList === 'object' ? groceryList.join('\n') : groceryList}>
+        <textarea rows={Math.max(20, groceryList.length)} value={typeof groceryList === 'object' ? groceryList.join('\n') : groceryList}>
         </textarea>
       </div>
     );
