@@ -5,7 +5,7 @@ body {
 .container {
   display: flex;
   border: 1px solid blue;
-  max-width: 1000px;
+  max-width: 1200px;
 }
 
 .ingredient-list {
@@ -16,7 +16,7 @@ body {
 
 .recipeLists {
   align-content: right;
-  margin-left: 100px;
+  margin-left: 0px;
 }
 
 .ingListHeader {
@@ -48,7 +48,7 @@ select {
 }
 
 button {
-  margin: 300px 5px 0px 5px;
+  margin: 250px 5px 0px 5px;
 }
 
 

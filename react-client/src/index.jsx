@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import List from './components/List.jsx';
 import Recipes from './components/Recipes.jsx';
+import GroceryList from './components/GroceryList.jsx';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,7 +17,8 @@ class App extends React.Component {
         all: [],
         most: [],
         some: []
-      }
+      },
+      groceryList: []
     }
     this.getRecipes = this.getRecipes.bind(this);
   }
@@ -44,10 +46,10 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
-    // setInterval(() => {
-    //   console.log(`Current possible recipes:     `, this.state.possibleRecipes);
-    //   // console.log(`Current selection of ingredients:     `, this.state.selectedIngredients);
-    // }, 2000);
+    setInterval(() => {
+      // console.log(`Current possible recipes:     `, this.state.possibleRecipes);
+      console.log(`Current grocery list:     `, this.state.groceryList);
+    }, 2000);
   }
 
   getRecipes(e) {
@@ -57,8 +59,36 @@ class App extends React.Component {
       method: 'POST',
       data,
       success: (possibleRecipes) => {
+        let groceryList = [];
+        let ingredientNames = this.state.selectedIngredients.map((ingredient) => {
+          return ingredient.name;
+        });
+        let groceryNames = this.state.groceryList.map((ingredient) => {
+          return ingredient.name;
+        });
+        console.log(ingredientNames);
+        possibleRecipes.most.forEach((recipe) => {
+          recipe.ingredients.forEach((ingredient) => {
+            if (!ingredientNames.includes(ingredient.name) && !groceryNames.includes(ingredient.name)) {
+              groceryNames.push(ingredient.name);
+              groceryList.push(ingredient);
+              console.log(`Added ${ingredient.name} to grocery list`);
+            }
+          });
+        });
+        possibleRecipes.some.forEach((recipe) => {
+          recipe.ingredients.forEach((ingredient) => {
+            if (!ingredientNames.includes(ingredient.name) && !groceryNames.includes(ingredient.name)) {
+              groceryNames.push(ingredient.name);
+              groceryList.push(ingredient);
+              console.log(`Added ${ingredient.name} to grocery list`);
+            }
+          });
+        });
+        console.log(groceryList);
         this.setState({
-          possibleRecipes
+          possibleRecipes,
+          groceryList
         });
       }
     });
@@ -87,6 +117,29 @@ class App extends React.Component {
     }
   }
 
+  onGroceryChange(e) {
+    // var options = e.target.options;
+    // var value = [];
+    // for (var i = 0, l = options.length; i < l; i++) {
+    //   if (options[i].selected) {
+    //     value.push({ id: Number(options[i].value),
+    //                         name: options[i].text
+    //                       });
+    //   }
+    // }
+    // if (e.target.getAttribute('class') === 'MultiBasics'){
+    //   // console.log('changing selection for MultiBasics');
+    //   this.setState({
+    //     selectedBasics: value
+    //   });
+    // } else if (e.target.getAttribute('class') === 'MultiIngredients'){
+    //   // console.log('changing selection for MultiBasics');
+    //   this.setState({
+    //     selectedIngredients: value
+    //   });
+    // }
+  }
+
   render () {
     let selectedIngredients = this.state.selectedIngredients.map((ingredient) => {
       return ingredient.name;
@@ -112,6 +165,9 @@ class App extends React.Component {
             <Recipes recipes={this.state.possibleRecipes}
                     selected={selectedIngredients}/>
           </div>
+          {/* <div className="groceryList">
+            <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
+          </div> */}
         </div>
       </div>)
   }
