@@ -8,14 +8,13 @@ class GroceryList extends React.Component {
   }
 
   render () {
-    // console.log(this.props.list);
-
     let groceryList = this.props.list.length > 0 ? this.props.list.map((item) => (
       <ListItem item={item} />
-    )) : 'No grocery list available';
+    )) : 'No groceries yet';
 
     return (
       <div className="groceryList">
+        <div>GROCERY LIST</div>
         {groceryList}
       </div>
 

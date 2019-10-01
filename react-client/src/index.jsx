@@ -125,7 +125,7 @@ class App extends React.Component {
   toggleRecipe(e) {
     let { selectedRecipes } = this.state;
     // console.log(`Current Recipe ID:     `, e.target.getAttribute('id'));
-    let currentRecipe = '';
+    let currentRecipe = { ingredients: [] };
     let currentPossibleRecipes = JSON.parse(JSON.stringify(this.state.possibleRecipes));
     currentPossibleRecipes.most.forEach((recipe) => {
       // console.log(recipe.recipe_id);
@@ -156,17 +156,19 @@ class App extends React.Component {
     } else {
       currentSelectedRecipes.splice(selectedRecipeIds.indexOf(currentRecipe.recipe_id), 1);
     }
-    // console.log(`Currently selected recipes:      `, currentSelectedRecipes);
+    console.log(`Currently selected recipes:      `, currentSelectedRecipes);
     let groceryList = [];
     let groceryNames = [];
-    currentSelectedRecipes.forEach((recipe) => {
-      recipe.ingredients.forEach((ingredient) => {
-        if (!groceryNames.includes(ingredient.name) && !selectedIngredientNames.includes(ingredient.name)) {
-          groceryNames.push(ingredient.name);
-          groceryList.push(ingredient);
-        }
-      })
-    });
+    if (currentSelectedRecipes.length > 0) {
+      currentSelectedRecipes.forEach((recipe) => {
+        recipe.ingredients.forEach((ingredient) => {
+          if (!groceryNames.includes(ingredient.name) && !selectedIngredientNames.includes(ingredient.name)) {
+            groceryNames.push(ingredient.name);
+            groceryList.push(ingredient);
+          }
+        })
+      });
+    }
     this.setState({
       possibleRecipes: currentPossibleRecipes,
       selectedRecipes: currentSelectedRecipes,

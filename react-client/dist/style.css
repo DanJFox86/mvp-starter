@@ -1,5 +1,5 @@
 body {
-  background-color: darkkhaki;
+  background-color: lightgray;
 }
 
 .container {
@@ -56,12 +56,12 @@ select {
 }
 
 .recipe {
-  border: 1px solid purple;
+  border: 2px solid purple;
   margin: 5px;
 }
 
 .recipe-selected {
-  border: 1px solid green;
+  border: 2px solid green;
   margin: 5px;
 }
 
@@ -88,4 +88,8 @@ select {
 
 .ingredient-present {
   font-weight: bold;
+}
+
+.groceryList {
+  padding: 10px;
 }
