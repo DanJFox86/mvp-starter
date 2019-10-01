@@ -37,14 +37,24 @@ app.get('/basics', (req, res) => {
 app.post('/getRecipes', (req, res) => {
   console.log(`Received ${req.method} request from ${req.url}`);
   // res.send('received selections, thx yo');
-  let { ingList } = req.body;
-  db.findRecipes(ingList, (err, data) => {
-    if(err) {
-      res.sendStatus(500);
-    } else {
-      res.json(data);
-    }
-  });
+  let ingList = [];
+  if (req.body.ingList) {
+    ingList = req.body.ingList;
+  }
+  if (ingList.length > 0) {
+    db.findRecipes(ingList, (err, data) => {
+      if(err) {
+        res.sendStatus(500);
+      } else {
+        res.json(data);
+      }
+    });
+  } else {
+    res.send({ all: [],
+              most: [],
+              some: []
+    });
+  }
 });
 
 app.listen(3000, function() {

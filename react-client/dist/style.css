@@ -33,7 +33,7 @@ body {
 
 .recipes {
   display: flex;
-  border: 3px solid red;
+  border: 3px solid #00c4c1;
   min-height: 300px;
   min-width: 100px;
 }
@@ -56,7 +56,7 @@ select {
 }
 
 .recipe {
-  border: 2px solid purple;
+  border: 2px solid red;
   margin: 5px;
 }
 
