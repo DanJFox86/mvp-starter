@@ -25,7 +25,7 @@ class Recipe extends React.Component {
       <div className={recipeClassName}>
         <div className="recipe-top">
           <div className="recipe-name">
-            <em>{recipe_name}</em>
+            <b>{recipe_name}</b>
           </div>
           <button className="recipe-check"
                     onClick={this.props.toggleRecipe}

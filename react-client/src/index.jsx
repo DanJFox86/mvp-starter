@@ -225,7 +225,7 @@ class App extends React.Component {
                     selected={selectedIngredients}
                 toggleRecipe={this.toggleRecipe.bind(this)} />
           </div>
-          <div className="groceryList">
+          <div>
             <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
           </div>
         </div>
