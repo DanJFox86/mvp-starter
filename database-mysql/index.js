@@ -33,10 +33,8 @@ var findRecipes = (ingList, callback) => {
   // Firstly, find recipes that can be solely made from the ingredients that have been selected
   // If no recipes exist that consist solely of the selected ingredients, find recipes that have the fewest additional ingredients necessary, prioritizing basic ingredients first
   let ingQuery = [];
-  let ingNameQuery = [];
   ingList.forEach((ing) => {
     ingQuery.push(`ingredient_id = ${Number(ing.id)}`);
-    ingNameQuery.push(`name=${(ing.name)}`);
   });
   // console.log(`Names of selected ingredients:     `, ingNameQuery);
 
