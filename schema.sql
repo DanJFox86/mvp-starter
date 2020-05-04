@@ -12,6 +12,17 @@ CREATE TABLE recipes (
   PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS food;
+
+CREATE TABLE food (
+  id tinyint NOT NULL,
+  data_type varchar(50) NOT NULL,
+  description varchar(200) NOT NULL,
+  publication_date varchar(11) NOT NULL,
+  food_category_id varchar(20) NOT NULL,
+  PRIMARY KEY (id)
+);
+
 -- ---
 -- Table 'recipeDietaryJoin'
 --

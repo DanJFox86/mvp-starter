@@ -2,21 +2,33 @@ body {
   background-color: lightgray;
 }
 
+.app-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+}
+
 .container {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   border: 1px solid blue;
-  max-width: 1200px;
+  width: 100vw;
+  height: 80vh;
 }
 
 .ingredient-list {
-  border: 2px solid green;
-  max-width: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  /* border: 2px solid green; */
+  border: 1px solid blue;
+  width: 300px;
+  height: 100%;
+  text-align: center;
 
-}
-
-.recipeLists {
-  align-content: right;
-  margin-left: 0px;
 }
 
 .ingListHeader {
@@ -31,11 +43,13 @@ body {
   margin: 10px;
 }
 
-.recipes {
+.recipes-container {
   display: flex;
-  border: 3px solid #00c4c1;
-  min-height: 300px;
-  min-width: 100px;
+  flex-direction: row;
+  justify-content: center;
+  border-right: 1px solid blue;
+  height: 100%;
+  width: 60%;
 }
 
 .recipe-list {
@@ -45,6 +59,7 @@ body {
 
 select {
   min-height: 400px;
+  width: 50%;
 }
 
 .recipe-top {
@@ -52,7 +67,7 @@ select {
 }
 
 .get-recipe-button {
-  margin: 250px 5px 0px 5px;
+
 }
 
 .recipe {
@@ -67,19 +82,28 @@ select {
 
 .all {
   padding: 5px;
-  border: 1px dashed green;
+  border-right: 1px solid black;
+  height: 100%;
+  width: 33%;
+  text-align: left;
+  overflow: auto;
 }
 
 
 .most {
   padding: 5px;
-  border: 1px dashed orange;
+  border-right: 1px solid black;
+  height: 100%;
+  width: 33%;
+  overflow: auto;
 }
 
 
 .some {
   padding: 5px;
-  border: 1px dashed red;
+  width: 33%;
+  height: 100%;
+  overflow: auto;
 }
 
 .recipe-name {
@@ -91,5 +115,6 @@ select {
 }
 
 .groceryList {
-  padding: 10px;
+  height: 100%;
+  width: 20%;
 }

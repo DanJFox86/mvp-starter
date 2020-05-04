@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
-import List from './components/List.jsx';
+import IngredientList from './components/IngredientList.jsx';
 import Recipes from './components/Recipes.jsx';
 import GroceryList from './components/GroceryList.jsx';
 
@@ -47,10 +47,6 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
-    // setInterval(() => {
-    //   // console.log(`Current possible recipes:     `, this.state.possibleRecipes);
-    //   console.log(`Current grocery list:     `, this.state.groceryList);
-    // }, 2000);
   }
 
   getRecipes(e) {
@@ -204,30 +200,22 @@ class App extends React.Component {
       return ingredient.name;
     });
     return (
-      <div>
-        <img src="logo.png"></img>
+      <div className='app-container'>
+        <img className='title' src="logo.png"></img>
         <div className="container">
-          <div>
-            <List onItemChange={this.itemChange.bind(this)}
-                      listName="Ingredients"
-                        items={this.state.items}/>
-          </div>
+          <IngredientList onItemChange={this.itemChange.bind(this)}
+                              listName="Ingredients"
+                                 items={this.state.items}
+                            getRecipes={this.getRecipes.bind(this)}/>
           {/* <div>
             <List onItemChange={this.itemChange.bind(this)}
                       listName="Basics"
                         items={this.state.basics}/>
           </div> */}
-          <div>
-            <button className="get-recipe-button" onClick={this.getRecipes}><h1>Find Recipes!   -></h1></button>
-          </div>
-          <div className="recipeLists">
-            <Recipes recipes={this.state.possibleRecipes}
-                    selected={selectedIngredients}
-                toggleRecipe={this.toggleRecipe.bind(this)} />
-          </div>
-          <div>
-            <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
-          </div>
+          <Recipes recipes={this.state.possibleRecipes}
+                  selected={selectedIngredients}
+              toggleRecipe={this.toggleRecipe.bind(this)} />
+          <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
         </div>
       </div>)
   }

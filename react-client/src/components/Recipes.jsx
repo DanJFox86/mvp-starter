@@ -9,7 +9,7 @@ class Recipes extends React.Component {
   render() {
     // console.log(`Most recipes:    `, this.props.recipes.most);
     return (
-      <div className="recipes">
+      <div className="recipes-container">
         <div className="all"> ALL
           <RecipeList selected={this.props.selected}
                        recipes={this.props.recipes.all}
