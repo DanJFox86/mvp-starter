@@ -83,8 +83,8 @@ select {
 .all {
   padding: 5px;
   border-right: 1px solid black;
-  height: 100%;
-  width: 33%;
+  height: calc(100% - 5px);
+  width: calc(33.4% - 5px);
   text-align: left;
   overflow: auto;
 }
@@ -93,16 +93,16 @@ select {
 .most {
   padding: 5px;
   border-right: 1px solid black;
-  height: 100%;
-  width: 33%;
+  height: calc(100% - 5px);
+  width: calc(33.3% - 5px);
   overflow: auto;
 }
 
 
 .some {
   padding: 5px;
-  width: 33%;
-  height: 100%;
+  width: calc(33.3% - 5px);
+  height: calc(100% - 5px);
   overflow: auto;
 }
 
