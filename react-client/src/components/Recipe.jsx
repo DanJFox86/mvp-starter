@@ -9,30 +9,35 @@ class Recipe extends React.Component {
 
   render() {
 
-    let { recipe_id, recipe_name, ingredients, isSelected } = this.props.recipe;
-    // console.log(`Ingredients that are on hand:     `, this.props.selected);
-    let button = this.props.listName !== 'all' ? (<button className="recipe-check"
-                                                 onClick={this.props.toggleRecipe}
-                                                      id={recipe_id}>{isSelected ? "-" : "+"}</button>) : '';
+    let { id, name, ingredients, isSelected } = this.props.recipe;
+    // let button = this.props.listName !== 'all' ? (<button className="recipe-check"
+    //                                              onClick={this.props.toggleRecipe}
+    //                                                   id={id}
+    //                                            data-id={id}>{isSelected ? "-" : "+"}</button>) : '';
 
     ingredients = ingredients.map((ingredient) => {
-      // console.log(this.props.selected.indexOf(ingredient.name) > -1);
-      // console.log(ingredient.name);
       let className = `ingredient${this.props.selected.includes(ingredient.name) ? '-present' : ''}`
-      return (<div className={className}>- {ingredient.name}</div>)
+      return (<div className={className}
+              data-recipe_id={id}>- {ingredient.name}</div>)
     });
 
-    let recipeClassName = `recipe${isSelected ? '-selected' : ''}`;
+    let recipeClassName = `recipe${isSelected ? ' selected' : ''}`;
+    // console.log(`recipe id #${id} is ${isSelected ? 'selected' : 'not selected'}`)
     // console.log(`Creating recipe DOM object for:       `, this.props.recipe);
     return (
-      <div className={recipeClassName}>
-        <div className="recipe-top">
-          <div className="recipe-name">
-            <b>{recipe_name}</b>
+      <div className={recipeClassName}
+      data-recipe_id={id}
+             onClick={this.props.toggleRecipe}>
+        <div className="recipe-top"
+        data-recipe_id={id}>
+          <div className="recipe-name"
+          data-recipe_id={id}>
+            <b data-recipe_id={id}>{name}</b>
           </div>
-          {button}
+          {/* {button} */}
         </div>
-        <div className="recipe-ingredients">
+        <div className="recipe-ingredients"
+        data-recipe_id={id}>
           {ingredients}
         </div>
       </div>

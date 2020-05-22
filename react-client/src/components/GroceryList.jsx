@@ -10,7 +10,7 @@ class GroceryList extends React.Component {
   render () {
     console.log(this.props.list.length)
     let groceryList = this.props.list.length > 0 ? this.props.list.reduce((acc, item) => {
-      acc.push(` - ${item.name}`);
+      acc.push(`${item.name}`);
       return acc;
     }, []) : 'No groceries yet';
 

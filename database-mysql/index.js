@@ -1,14 +1,14 @@
-var mysql = require('mysql');
+const mysql = require('mysql');
 const _ = require('underscore');
 const Promise = require('bluebird');
 
-var connection = mysql.createConnection({
+const connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   database : 'refrigeratorducer'
 });
 
-var selectAll = function(callback) {
+const selectAll = function(callback) {
   connection.query('SELECT * FROM ingredients', function(err, results, fields) {
     if(err) {
       callback(err, null);
@@ -18,7 +18,7 @@ var selectAll = function(callback) {
   });
 };
 
-var selectBasics = function(callback) {
+const selectBasics = function(callback) {
   connection.query('SELECT ingredients.name, ingredients.id FROM basics, ingredients where basics.ingredient_id = ingredients.id;', function(err, results, fields) {
     if(err) {
       callback(err, null);
@@ -28,7 +28,7 @@ var selectBasics = function(callback) {
   });
 };
 
-var findRecipes = (ingList, callback) => {
+const findRecipes = (ingList, callback) => {
   console.log(ingList);
   // Firstly, find recipes that can be solely made from the ingredients that have been selected
   // If no recipes exist that consist solely of the selected ingredients, find recipes that have the fewest additional ingredients necessary, prioritizing basic ingredients first
@@ -58,23 +58,19 @@ var findRecipes = (ingList, callback) => {
           callback(err, null);
         } else {
           console.log(results);
-          let list = [];
+          let recipes = [];
           results.forEach(({ id, name }) => {
             console.log(`finding ingredients for ${id}`);
-            list.push(new Promise((resolve, reject) => {
-              connection.query(`SELECT ingredients.name, ingredients.id FROM ingredients, ingredientRecipeJoin WHERE ingredientRecipeJoin.recipe_id = ${id} AND ingredients.id = ingredientRecipeJoin.ingredient_id;`, (err, results) => {
+            recipes.push(new Promise((resolve, reject) => {
+              connection.query(`SELECT ingredients.name, ingredients.id FROM ingredients, ingredientRecipeJoin WHERE ingredientRecipeJoin.recipe_id = ${id} AND ingredients.id = ingredientRecipeJoin.ingredient_id;`, (err, ingredients) => {
                 if (!err) {
-                  let obj = {
-                    recipe_id: id,
-                    recipe_name: name
-                  };
-                  obj.ingredients = results;
-                  resolve(obj);
+                  let recipe = { id, name, ingredients };
+                  resolve(recipe);
                 }
               });
             }));
           });
-          Promise.all(list)
+          Promise.all(recipes)
             .then((recipeInfo) => {
               recipeInfoSort(recipeInfo, ingList, callback);
             });
@@ -84,9 +80,10 @@ var findRecipes = (ingList, callback) => {
   });
 };
 
-const recipeInfoSort = (recipeInfo, ingList, callback) => {
-  // console.log(recipeInfo);
+const recipeInfoSort = (recipes, ingList, callback) => {
+  // console.log(recipes);
   let sortedRecipes = {
+    recipes,
     all: [],
     most: [],
     some: []
@@ -95,24 +92,23 @@ const recipeInfoSort = (recipeInfo, ingList, callback) => {
     return ing.name;
   });
   // console.log(ingredientNames);
-  recipeInfo.forEach((recipe) => {
+  recipes.forEach((recipe) => {
     let ingTotal = recipe.ingredients.length;
-    let ingHaz = 0;
+    let haveIngredient = 0;
     recipe.ingredients.forEach((ing) => {
       // console.log(ing);
       if (ingredientNames.includes(ing.name)) {
-        ingHaz++;
+        haveIngredient++;
       }
     });
-    let haveIngPercentage = ingHaz / ingTotal;
+    let haveIngPercentage = haveIngredient / ingTotal;
     // console.log(haveIngPercentage)
     if (haveIngPercentage === 1) {
-      sortedRecipes.all.push(recipe);
+      sortedRecipes.all.push(recipe.id);
     } else if (haveIngPercentage >= .5) {
-      recipe.haveIngPercentage = haveIngPercentage;
-      sortedRecipes.most.push(recipe);
+      sortedRecipes.most.push(recipe.id);
     } else {
-      sortedRecipes.some.push(recipe);
+      sortedRecipes.some.push(recipe.id);
     }
   });
   sortedRecipes.most.sort((a, b) => {
@@ -121,7 +117,8 @@ const recipeInfoSort = (recipeInfo, ingList, callback) => {
   sortedRecipes.some.sort((a, b) => {
     return b.haveIngPercentage - a.haveIngPercentage;
   });
-  // console.log(sortedRecipes);
+  console.log(sortedRecipes);
+
   callback(null, sortedRecipes);
 }
 

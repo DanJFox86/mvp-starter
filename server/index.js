@@ -1,19 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-// UNCOMMENT THE DATABASE YOU'D LIKE TO USE
 var db = require('../database-mysql');
-// var items = require('../database-mongo');
 
 var app = express();
 
-// UNCOMMENT FOR REACT
 app.use(express.static(__dirname + '/../react-client/dist'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// UNCOMMENT FOR ANGULAR
-// app.use(express.static(__dirname + '/../angular-client'));
-// app.use(express.static(__dirname + '/../node_modules'));
 
 app.get('/items', (req, res) => {
   db.selectAll((err, data) => {
@@ -24,6 +18,7 @@ app.get('/items', (req, res) => {
     }
   });
 });
+
 app.get('/basics', (req, res) => {
   db.selectBasics((err, data) => {
     if(err) {
@@ -36,7 +31,6 @@ app.get('/basics', (req, res) => {
 
 app.post('/getRecipes', (req, res) => {
   console.log(`Received ${req.method} request from ${req.url}`);
-  // res.send('received selections, thx yo');
   let ingList = [];
   if (req.body.ingList) {
     ingList = req.body.ingList;
@@ -50,9 +44,10 @@ app.post('/getRecipes', (req, res) => {
       }
     });
   } else {
-    res.send({ all: [],
-              most: [],
-              some: []
+    res.send({ recipes: [],
+                   all: [],
+                  most: [],
+                  some: []
     });
   }
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+import _ from 'lodash';
 import IngredientList from './components/IngredientList.jsx';
 import Recipes from './components/Recipes.jsx';
 import GroceryList from './components/GroceryList.jsx';
@@ -14,6 +15,7 @@ class App extends React.Component {
       selectedBasics: [],
       selectedIngredients: [],
       possibleRecipes: {
+        recipes: [],
         all: [],
         most: [],
         some: []
@@ -22,70 +24,50 @@ class App extends React.Component {
       groceryList: []
     }
     this.getRecipes = this.getRecipes.bind(this);
+    this.updateGroceries = this.updateGroceries.bind(this);
   }
 
   componentDidMount() {
     $.ajax({
       url: '/items',
-      success: (data) => {
+      success: (items) => {
         this.setState({
-          items: data
-        })
+          items
+        });
+        // $.ajax({
+        //   url: '/basics',
+        //   success: (basics) => {
+        //   },
+        //   error: (err) => {
+        //     console.log('err', err);
+        //   }
+        // });
       },
       error: (err) => {
         console.log('err', err);
       }
     });
-    $.ajax({
-      url: '/basics',
-      success: (data) => {
-        this.setState({
-          basics: data
-        })
-      },
-      error: (err) => {
-        console.log('err', err);
-      }
-    });
+
   }
 
-  getRecipes(e) {
+  getRecipes() {
     let data = { ingList: this.state.selectedIngredients };
     $.post({
       url: '/getRecipes',
       method: 'POST',
       data,
       success: (possibleRecipes) => {
+        console.log('SUCCESS, got recipe info back')
+        console.log(possibleRecipes)
         let groceryList = [];
         let ingredientNames = this.state.selectedIngredients.map((ingredient) => {
           return ingredient.name;
         });
-        possibleRecipes.most.forEach((recipe) => {
+        for (let recipe of possibleRecipes.recipes) {
+
           recipe.isSelected = false;
-        });
-        possibleRecipes.some.forEach((recipe) => {
-          recipe.isSelected = false;
-        });
-        // console.log(ingredientNames);
-        // possibleRecipes.most.forEach((recipe) => {
-        //   recipe.ingredients.forEach((ingredient) => {
-        //     if (!ingredientNames.includes(ingredient.name) && !groceryNames.includes(ingredient.name)) {
-        //       groceryNames.push(ingredient.name);
-        //       groceryList.push(ingredient);
-        //       console.log(`Added ${ingredient.name} to grocery list`);
-        //     }
-        //   });
-        // });
-        // possibleRecipes.some.forEach((recipe) => {
-        //   recipe.ingredients.forEach((ingredient) => {
-        //     if (!ingredientNames.includes(ingredient.name) && !groceryNames.includes(ingredient.name)) {
-        //       groceryNames.push(ingredient.name);
-        //       groceryList.push(ingredient);
-        //       console.log(`Added ${ingredient.name} to grocery list`);
-        //     }
-        //   });
-        // });
-        // console.log(groceryList);
+          // console.log(`recipe id #${recipe.id} is not selected`)
+        }
         this.setState({
           possibleRecipes,
           groceryList: [],
@@ -96,6 +78,7 @@ class App extends React.Component {
   }
 
   itemChange(e) {
+    console.log('CHANGING ITEMS')
     var options = e.target.options;
     var value = [];
     for (var i = 0, l = options.length; i < l; i++) {
@@ -119,57 +102,25 @@ class App extends React.Component {
   }
 
   toggleRecipe(e) {
-    let { selectedRecipes } = this.state;
-    // console.log(`Current Recipe ID:     `, e.target.getAttribute('id'));
-    let currentRecipe = { ingredients: [] };
-    let currentPossibleRecipes = JSON.parse(JSON.stringify(this.state.possibleRecipes));
-    currentPossibleRecipes.most.forEach((recipe) => {
-      // console.log(recipe.recipe_id);
-      if (recipe.recipe_id === Number(e.target.getAttribute('id'))) {
+    let { recipe_id } = e.target.dataset;
+    recipe_id = Number(recipe_id);
+    let newPossibleRecipes = _.cloneDeep(this.state.possibleRecipes);
+    for (let recipe of newPossibleRecipes.recipes) {
+      if (recipe.id === recipe_id) {
         recipe.isSelected = !recipe.isSelected;
-        currentRecipe = recipe;
+        break;
       }
-    });
-    currentPossibleRecipes.some.forEach((recipe) => {
-      // console.log(recipe.recipe_id);
-      if (recipe.recipe_id === Number(e.target.getAttribute('id'))) {
-        recipe.isSelected = !recipe.isSelected;
-        currentRecipe = recipe;
-      }
-    });
-    let selectedRecipeIds = [];
-    let selectedIngredientNames = [];
-    this.state.selectedIngredients.forEach((ingredient) => {
-      selectedIngredientNames.push(ingredient.name);
-    })
-    this.state.selectedRecipes.forEach((recipe) => {
-      selectedRecipeIds.push(recipe.recipe_id);
-    });
-    // console.log(currentRecipe);
-    let currentSelectedRecipes = this.state.selectedRecipes;
-    if (!selectedRecipeIds.includes(currentRecipe.recipe_id)) {
-      currentSelectedRecipes.push(currentRecipe);
-    } else {
-      currentSelectedRecipes.splice(selectedRecipeIds.indexOf(currentRecipe.recipe_id), 1);
     }
-    console.log(`Currently selected recipes:      `, currentSelectedRecipes);
-    let groceryList = [];
-    let groceryNames = [];
-    if (currentSelectedRecipes.length > 0) {
-      currentSelectedRecipes.forEach((recipe) => {
-        recipe.ingredients.forEach((ingredient) => {
-          if (!groceryNames.includes(ingredient.name) && !selectedIngredientNames.includes(ingredient.name)) {
-            groceryNames.push(ingredient.name);
-            groceryList.push(ingredient);
-          }
-        })
-      });
-    }
+    let groceryList = this.updateGroceries();
     this.setState({
-      possibleRecipes: currentPossibleRecipes,
-      selectedRecipes: currentSelectedRecipes,
-      groceryList
+      possibleRecipes: newPossibleRecipes
     });
+  }
+
+  updateGroceries() {
+    // go thru each recipe
+    // -- if selected go thru each ingredient
+    // ---- If ingredient is not in grocery list, add ingredient id to list
   }
 
   onGroceryChange(e) {
@@ -207,12 +158,7 @@ class App extends React.Component {
                               listName="Ingredients"
                                  items={this.state.items}
                             getRecipes={this.getRecipes.bind(this)}/>
-          {/* <div>
-            <List onItemChange={this.itemChange.bind(this)}
-                      listName="Basics"
-                        items={this.state.basics}/>
-          </div> */}
-          <Recipes recipes={this.state.possibleRecipes}
+          <Recipes recipeInfo={this.state.possibleRecipes}
                   selected={selectedIngredients}
               toggleRecipe={this.toggleRecipe.bind(this)} />
           <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
