@@ -9,11 +9,17 @@ const connection = mysql.createConnection({
 });
 
 const selectAll = function(callback) {
-  connection.query('SELECT * FROM ingredients', function(err, results, fields) {
+  connection.query('SELECT * FROM ingredients', function(err, ingredients, fields) {
     if(err) {
       callback(err, null);
     } else {
-      callback(null, results);
+      let data = {};
+      console.log(ingredients)
+      for (let ingredient of ingredients) {
+        data[ingredient.id] = ingredient.name;
+      }
+      console.log(data);
+      callback(null, data);
     }
   });
 };
@@ -32,77 +38,80 @@ const findRecipes = (ingList, callback) => {
   console.log(ingList);
   // Firstly, find recipes that can be solely made from the ingredients that have been selected
   // If no recipes exist that consist solely of the selected ingredients, find recipes that have the fewest additional ingredients necessary, prioritizing basic ingredients first
-  let ingQuery = [];
-  ingList.forEach((ing) => {
-    ingQuery.push(`ingredient_id = ${Number(ing.id)}`);
-  });
-  // console.log(`Names of selected ingredients:     `, ingNameQuery);
-
-  let query = `SELECT recipe_id FROM ingredientRecipeJoin WHERE ${ingQuery.join(' OR ')}`;
+  let query = `SELECT ingredientRecipeJoin.recipe_id, ingredientRecipeJoin.ingredient_id, recipes.name FROM ingredientRecipeJoin, recipes WHERE ingredient_id IN (${ingList.join(',')}) AND ingredientRecipeJoin.recipe_id = recipes.id`;
   // console.log(query);
-  connection.query(query, (err, results, fields) => { // Gets list of recipes IDs that have at least 1 of the selected ingredients
+  connection.query(query, (err, results, fields) => {
+    // Gets list of recipes IDs that have at least 1 of the selected ingredients
     if(err) {
+      console.log(err)
       callback(err, null);
     } else {
-      let resultIds = results.map((result) => {
-        return result.recipe_id;
-      });
-      resultIds = _.uniq(resultIds);
-      let recipeIdQuery = [];
-      resultIds.forEach((id) => {
-        recipeIdQuery.push(`ID=${id}`);
-      });
-      let newQuery = `SELECT * FROM recipes WHERE ${recipeIdQuery.join(' OR ')};`;
-      connection.query(newQuery, (err, results) => { // Gets recipe info and sends to client
-        if (err) {
-          callback(err, null);
-        } else {
-          console.log(results);
-          let recipes = [];
-          results.forEach(({ id, name }) => {
-            console.log(`finding ingredients for ${id}`);
-            recipes.push(new Promise((resolve, reject) => {
-              connection.query(`SELECT ingredients.name, ingredients.id FROM ingredients, ingredientRecipeJoin WHERE ingredientRecipeJoin.recipe_id = ${id} AND ingredients.id = ingredientRecipeJoin.ingredient_id;`, (err, ingredients) => {
-                if (!err) {
-                  let recipe = { id, name, ingredients };
-                  resolve(recipe);
-                }
-              });
-            }));
-          });
-          Promise.all(recipes)
-            .then((recipeInfo) => {
-              recipeInfoSort(recipeInfo, ingList, callback);
-            });
+      console.log('Join table info:  ', results);
+
+      //    Recipe tracker: list of all recipes that user has at least 1 ingredient.
+      // ingredientTracker:
+      let recipeTracker = {};
+      results.forEach(({ recipe_id, ingredient_id, name }) => {
+        if (recipeTracker[recipe_id] === undefined) {
+          recipeTracker[recipe_id] = {id: recipe_id, name , ingredients: [], isSelected: false };
         }
       });
+      let recipeIdArr = [];
+      for (let key in recipeTracker) {
+        recipeIdArr.push(`ID=${key}`);
+      }
+      // recipeInfoSort(recipeTracker, ingList, callback);
+      // console.log('received ingredient list: ', ingList);
+
+      // console.log('TRACKERTRACKERTRACKERTRACKERTRACKERTRACKERTRACKER:  ', recipeTracker);
+      let promises = [];
+      for (let key in recipeTracker) {
+        promises.push(new Promise((resolve, reject) => {
+          connection.query(`SELECT ingredients.name, ingredients.id FROM ingredients, ingredientRecipeJoin WHERE ingredientRecipeJoin.recipe_id = ${key} AND ingredients.id = ingredientRecipeJoin.ingredient_id;`, (err, ingredients) => {
+            if (!err) {
+              recipeTracker[key].ingredients = ingredients.map((ing) => ing.id);
+              resolve();
+            }
+          });
+        }));
+      }
+      Promise.all(promises)
+        .then(() => {
+          console.log('WHATUPWHATUPWHATUPWHATUPWHATUPWHATUPWHATUPWHATUPWHATUP', recipeTracker)
+          recipeInfoSort(recipeTracker, ingList, callback);
+        });
     }
   });
 };
 
-const recipeInfoSort = (recipes, ingList, callback) => {
+const recipeInfoSort = (recipeTracker, ingList, callback) => {
   // console.log(recipes);
+  let recipes = [];
+  for (let id in recipeTracker) {
+    recipes.push(recipeTracker[id]);
+  }
   let sortedRecipes = {
     recipes,
     all: [],
     most: [],
     some: []
   };
-  let ingredientNames = ingList.map((ing) => {
-    return ing.name;
-  });
-  // console.log(ingredientNames);
+  let ingredientIds = ingList.map((selectedIng) => Number(selectedIng));
+
+  // console.log('RECIPES YOU CAN POSSIBLY MAKE:  ', recipes)
+  // console.log('INGREDIENTS ON HAND    ', ingredientIds);
   recipes.forEach((recipe) => {
+    // console.log(typeof recipe.ingredients[0])
     let ingTotal = recipe.ingredients.length;
     let haveIngredient = 0;
     recipe.ingredients.forEach((ing) => {
-      // console.log(ing);
-      if (ingredientNames.includes(ing.name)) {
+      if (ingredientIds.includes(ing)) {
+        console.log('you have this ingredient with id: ', ing)
         haveIngredient++;
       }
     });
     let haveIngPercentage = haveIngredient / ingTotal;
-    // console.log(haveIngPercentage)
+    // console.log('You have ', haveIngPercentage * 100, '% of the necessary ingredients for ', recipe.name)
     if (haveIngPercentage === 1) {
       sortedRecipes.all.push(recipe.id);
     } else if (haveIngPercentage >= .5) {
@@ -117,8 +126,7 @@ const recipeInfoSort = (recipes, ingList, callback) => {
   sortedRecipes.some.sort((a, b) => {
     return b.haveIngPercentage - a.haveIngPercentage;
   });
-  console.log(sortedRecipes);
-
+  // console.log(sortedRecipes);
   callback(null, sortedRecipes);
 }
 

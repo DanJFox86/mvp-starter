@@ -1,9 +1,12 @@
 import React from 'react';
 
-const ListItem = (props) => (
-  <option value={props.item.id} key={props.item.id}>
-    { props.item.name }
-  </option>
-)
+const ListItem = (props) => {
+  const { id, name } = props;
+  return (
+    <option value={id} key={id}>
+      { name }
+    </option>
+  );
+}
 
 export default ListItem;

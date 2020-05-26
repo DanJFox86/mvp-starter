@@ -18,31 +18,33 @@ class Recipes extends React.Component {
   }
   render() {
     // console.log(`Most recipes:    `, this.props.recipes.most);
-    console.log(this.props.recipeInfo)
+    // console.log(this.props.recipeInfo)
     let allRecipes = this.filterRecipes('all');
     let mostRecipes = this.filterRecipes('most');
     let someRecipes = this.filterRecipes('some');
+    let { posIngredients, selected, toggleRecipe } = this.props;
     return (
       <div className="recipes-container">
         <div className="all">
           <div className="header"> ALL</div>
-          <RecipeList selected={this.props.selected}
-                       recipes={allRecipes}
-                  toggleRecipe={this.props.toggleRecipe}
-                      listName="all" />
+          <RecipeList posIngredients={posIngredients}
+                            selected={selected}
+                             recipes={allRecipes}
+                        toggleRecipe={toggleRecipe}
+                            listName="all" />
         </div>
         <div className="most">
           <div className="header"> MOST</div>
-          <RecipeList  selected={this.props.selected}
+          <RecipeList  selected={selected}
                         recipes={mostRecipes}
-                   toggleRecipe={this.props.toggleRecipe}
+                   toggleRecipe={toggleRecipe}
                        listName="most" />
         </div>
         <div className="some">
           <div className="header"> SOME</div>
-          <RecipeList  selected={this.props.selected}
+          <RecipeList  selected={selected}
                         recipes={someRecipes}
-                   toggleRecipe={this.props.toggleRecipe}
+                   toggleRecipe={toggleRecipe}
                        listName="some" />
         </div>
       </div>)

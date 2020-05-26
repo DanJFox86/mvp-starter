@@ -9,14 +9,16 @@ class Recipe extends React.Component {
 
   render() {
 
+    let { posIngredients } = this.props;
     let { id, name, ingredients, isSelected } = this.props.recipe;
     // let button = this.props.listName !== 'all' ? (<button className="recipe-check"
     //                                              onClick={this.props.toggleRecipe}
     //                                                   id={id}
     //                                            data-id={id}>{isSelected ? "-" : "+"}</button>) : '';
-
+    console.log('ingredient list for ', name);
+    console.log(ingredients)
     ingredients = ingredients.map((ingredient) => {
-      let className = `ingredient${this.props.selected.includes(ingredient.name) ? '-present' : ''}`
+      let className = `ingredient${this.props.selected.includes(ingredient.id) ? '-present' : ''}`
       return (<div className={className}
               data-recipe_id={id}>- {ingredient.name}</div>)
     });

@@ -10,6 +10,10 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      ingredients: {
+        all: {},
+        selected: {}
+      },
       items: [],
       basics: [],
       selectedBasics: [],
@@ -21,7 +25,7 @@ class App extends React.Component {
         some: []
       },
       selectedRecipes: [],
-      groceryList: []
+      groceryList: {}
     }
     this.getRecipes = this.getRecipes.bind(this);
     this.updateGroceries = this.updateGroceries.bind(this);
@@ -29,10 +33,11 @@ class App extends React.Component {
 
   componentDidMount() {
     $.ajax({
-      url: '/items',
-      success: (items) => {
+      url: '/ingredients',
+      success: (ingredients) => {
+        // console.log('received ingredients list: ', ingredients);
         this.setState({
-          items
+          ingredients
         });
         // $.ajax({
         //   url: '/basics',
@@ -51,23 +56,16 @@ class App extends React.Component {
   }
 
   getRecipes() {
-    let data = { ingList: this.state.selectedIngredients };
+    let data = { ingredientIds: Object.keys(this.state.ingredients.selected) };
+    console.log('heres what we got back', data)
     $.post({
       url: '/getRecipes',
       method: 'POST',
       data,
       success: (possibleRecipes) => {
         console.log('SUCCESS, got recipe info back')
-        console.log(possibleRecipes)
+        // console.log(possibleRecipes)
         let groceryList = [];
-        let ingredientNames = this.state.selectedIngredients.map((ingredient) => {
-          return ingredient.name;
-        });
-        for (let recipe of possibleRecipes.recipes) {
-
-          recipe.isSelected = false;
-          // console.log(`recipe id #${recipe.id} is not selected`)
-        }
         this.setState({
           possibleRecipes,
           groceryList: [],
@@ -78,27 +76,33 @@ class App extends React.Component {
   }
 
   itemChange(e) {
-    console.log('CHANGING ITEMS')
-    var options = e.target.options;
-    var value = [];
-    for (var i = 0, l = options.length; i < l; i++) {
+    // console.log('CHANGING ITEMS')
+    // console.log(this.state.ingredients)
+    const { options } = e.target;
+    let newIngredients = _.cloneDeep(this.state.ingredients);
+    let newSelected = {};
+    for (let i = 0; i < options.length; i++) {
       if (options[i].selected) {
-        value.push({ id: Number(options[i].value),
-                            name: options[i].text
-                          });
+        newSelected[options[i].value] = true;
       }
     }
-    if (e.target.getAttribute('class') === 'MultiBasics'){
-      // console.log('changing selection for MultiBasics');
-      this.setState({
-        selectedBasics: value
-      });
-    } else if (e.target.getAttribute('class') === 'MultiIngredients'){
-      // console.log('changing selection for MultiBasics');
-      this.setState({
-        selectedIngredients: value
-      });
-    }
+    console.log(newSelected);
+    newIngredients.selected = newSelected;
+    // console.log(newIngredients)
+    this.setState({
+      ingredients: newIngredients
+    });
+    // if (e.target.getAttribute('class') === 'MultiBasics'){
+    //   // console.log('changing selection for MultiBasics');
+    //   this.setState({
+    //     selectedBasics: value
+    //   });
+    // } else if (e.target.getAttribute('class') === 'MultiIngredients'){
+    //   // console.log('changing selection for MultiBasics');
+    //   this.setState({
+    //     selectedIngredients: value
+    //   });
+    // }
   }
 
   toggleRecipe(e) {
@@ -108,19 +112,39 @@ class App extends React.Component {
     for (let recipe of newPossibleRecipes.recipes) {
       if (recipe.id === recipe_id) {
         recipe.isSelected = !recipe.isSelected;
+        var groceryList = this.updateGroceries(recipe);
         break;
       }
     }
-    let groceryList = this.updateGroceries();
+    // let groceryList = this.updateGroceries();
     this.setState({
-      possibleRecipes: newPossibleRecipes
+      possibleRecipes: newPossibleRecipes,
+      groceryList
     });
   }
 
-  updateGroceries() {
+  updateGroceries(recipe) {
     // go thru each recipe
     // -- if selected go thru each ingredient
-    // ---- If ingredient is not in grocery list, add ingredient id to list
+    // ---- If ingredient is not in grocery list and user does not have it, add ingredient id to list
+    let newGroceryList = _.cloneDeep(this.state.groceryList);
+    console.log(recipe)
+    if (recipe.isSelected) {
+      for (let ingredient of recipe.ingredients) {
+        if (!newGroceryList[ingredient]) {
+          newGroceryList[ingredient] = 0;
+        }
+        newGroceryList[ingredient] += 1;
+      }
+    } else {
+      for (let ingredient of recipe.ingredients) {
+        newGroceryList[ingredient] -= 1;
+        if (newGroceryList[ingredient] === 0) {
+          delete newGroceryList[ingredient];
+        }
+      }
+    }
+    return newGroceryList;
   }
 
   onGroceryChange(e) {
@@ -156,11 +180,12 @@ class App extends React.Component {
         <div className="container">
           <IngredientList onItemChange={this.itemChange.bind(this)}
                               listName="Ingredients"
-                                 items={this.state.items}
+                           ingredients={this.state.ingredients}
                             getRecipes={this.getRecipes.bind(this)}/>
           <Recipes recipeInfo={this.state.possibleRecipes}
-                  selected={selectedIngredients}
-              toggleRecipe={this.toggleRecipe.bind(this)} />
+                     selected={selectedIngredients}
+               posIngredients={this.state.items}
+                 toggleRecipe={this.toggleRecipe.bind(this)} />
           <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
         </div>
       </div>)

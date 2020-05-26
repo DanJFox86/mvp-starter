@@ -9,11 +9,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-app.get('/items', (req, res) => {
-  db.selectAll((err, data) => {
+app.get('/ingredients', (req, res) => {
+  db.selectAll((err, ingredients) => {
     if(err) {
       res.sendStatus(500);
     } else {
+      let data = {};
+      data.all = ingredients;
+      data.selected = {};
       res.json(data);
     }
   });
@@ -31,15 +34,13 @@ app.get('/basics', (req, res) => {
 
 app.post('/getRecipes', (req, res) => {
   console.log(`Received ${req.method} request from ${req.url}`);
-  let ingList = [];
-  if (req.body.ingList) {
-    ingList = req.body.ingList;
-  }
-  if (ingList.length > 0) {
-    db.findRecipes(ingList, (err, data) => {
+  let { ingredientIds } = req.body;
+  if (ingredientIds.length > 0) {
+    db.findRecipes(ingredientIds, (err, data) => {
       if(err) {
         res.sendStatus(500);
       } else {
+        console.log('sending info', data)
         res.json(data);
       }
     });
