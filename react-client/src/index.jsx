@@ -34,7 +34,6 @@ class App extends React.Component {
     $.ajax({
       url: '/ingredients',
       success: (ingredients) => {
-        // console.log('received ingredients list: ', ingredients);
         this.setState({
           ingredients
         });
@@ -86,29 +85,7 @@ class App extends React.Component {
 
     newRecipes.list[id].isSelected = !newRecipes.list[id].isSelected;
 
-    if (newRecipes.list[id].isSelected) {
-      for (let ingredientId of newRecipes.list[id].ingredients) {
-        if (!ingredients.selected[ingredientId]) {
-          if (!newGroceryList[ingredientId]) {
-            newGroceryList[ingredientId] = 0;
-          }
-          newGroceryList[ingredientId] += 1;
-        } else {
-          if (newGroceryList[ingredientId]) {
-            delete newGroceryList[ingredientId];
-          }
-        }
-      }
-    } else {
-      for (let ingredientId of newRecipes.list[id].ingredients) {
-        if (!ingredients.selected[ingredientId]) {
-          newGroceryList[ingredientId] -= 1;
-          if (newGroceryList[ingredientId] === 0) {
-            delete newGroceryList[ingredientId];
-          }
-        }
-      }
-    }
+    this.updateGroceries(id, newRecipes, ingredients, newGroceryList);
 
     this.setState({
       recipes: newRecipes,
@@ -116,52 +93,33 @@ class App extends React.Component {
     });
   }
 
-  updateGroceries(recipe) {
+  updateGroceries(id, recipes, ingredients, groceryList) {
     // go thru each recipe
     // -- if selected go thru each ingredient
     // ---- If ingredient is not in grocery list and user does not have it, add ingredient id to list
-    console.log('UPDATING GROCERY LIST')
-    let newGroceryList = _.cloneDeep(this.state.groceryList);
-    console.log(recipe)
-    if (recipe.isSelected) {
-      for (let ingredient of recipe.ingredients) {
-        if (!newGroceryList[ingredient]) {
-          newGroceryList[ingredient] = 0;
+    if (recipes.list[id].isSelected) {
+      for (let ingredientId of recipes.list[id].ingredients) {
+        if (!ingredients.selected[ingredientId]) {
+          if (!groceryList[ingredientId]) {
+            groceryList[ingredientId] = 0;
+          }
+          groceryList[ingredientId] += 1;
+        } else {
+          if (groceryList[ingredientId]) {
+            delete groceryList[ingredientId];
+          }
         }
-        newGroceryList[ingredient] += 1;
       }
     } else {
-      for (let ingredient of recipe.ingredients) {
-        newGroceryList[ingredient] -= 1;
-        if (newGroceryList[ingredient] === 0) {
-          delete newGroceryList[ingredient];
+      for (let ingredientId of recipes.list[id].ingredients) {
+        if (!ingredients.selected[ingredientId]) {
+          groceryList[ingredientId] -= 1;
+          if (groceryList[ingredientId] === 0) {
+            delete groceryList[ingredientId];
+          }
         }
       }
     }
-    return newGroceryList;
-  }
-
-  onGroceryChange(e) {
-    // var options = e.target.options;
-    // var value = [];
-    // for (var i = 0, l = options.length; i < l; i++) {
-    //   if (options[i].selected) {
-    //     value.push({ id: Number(options[i].value),
-    //                         name: options[i].text
-    //                       });
-    //   }
-    // }
-    // if (e.target.getAttribute('class') === 'MultiBasics'){
-    //   // console.log('changing selection for MultiBasics');
-    //   this.setState({
-    //     selectedBasics: value
-    //   });
-    // } else if (e.target.getAttribute('class') === 'MultiIngredients'){
-    //   // console.log('changing selection for MultiBasics');
-    //   this.setState({
-    //     selectedIngredients: value
-    //   });
-    // }
   }
 
   render () {
@@ -176,9 +134,8 @@ class App extends React.Component {
           <Recipes recipes={this.state.recipes}
                ingredients={this.state.ingredients}
               toggleRecipe={this.toggleRecipe.bind(this)} />
-          <GroceryList onGroceryChange={this.onGroceryChange.bind(this)}
-                           ingredients={this.state.ingredients}
-                                  list={this.state.groceryList}/>
+          <GroceryList  ingredients={this.state.ingredients}
+                               list={this.state.groceryList}/>
         </div>
       </div>)
   }
