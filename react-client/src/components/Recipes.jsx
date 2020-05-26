@@ -13,10 +13,10 @@ class Recipes extends React.Component {
     });
   }
   render() {
-    let allRecipes = this.filterRecipes('all');
-    let mostRecipes = this.filterRecipes('most');
-    let someRecipes = this.filterRecipes('some');
-    let { ingredients, toggleRecipe } = this.props;
+    const allRecipes = this.filterRecipes('all');
+    const mostRecipes = this.filterRecipes('most');
+    const someRecipes = this.filterRecipes('some');
+    const { ingredients, toggleRecipe } = this.props;
     return (
       <div className="recipes-container">
         <div className="all">
