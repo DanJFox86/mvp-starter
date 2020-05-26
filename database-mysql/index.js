@@ -70,7 +70,6 @@ const findRecipes = (ingList, callback) => {
 };
 
 const recipeInfoSort = (recipeTracker, ingList, callback) => {
-  // console.log(recipes);
   let list = {};
   for (let id in recipeTracker) {
     list[id] = recipeTracker[id];

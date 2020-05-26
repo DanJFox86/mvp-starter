@@ -14,7 +14,6 @@ class App extends React.Component {
         all: {},
         selected: {}
       },
-      items: [],
       basics: [],
       selectedBasics: [],
       recipes: {
@@ -27,7 +26,10 @@ class App extends React.Component {
       groceryList: {}
     }
     this.getRecipes = this.getRecipes.bind(this);
+    this.addIngredient = this.addIngredient.bind(this);
     this.updateGroceries = this.updateGroceries.bind(this);
+    this.itemChange = this.itemChange.bind(this);
+    this.toggleRecipe = this.toggleRecipe.bind(this);
   }
 
   componentDidMount() {
@@ -43,6 +45,10 @@ class App extends React.Component {
       }
     });
 
+  }
+
+  addIngredient(e) {
+    console.log(e.target.getAttribute('class'));
   }
 
   getRecipes() {
@@ -123,19 +129,22 @@ class App extends React.Component {
   }
 
   render () {
+    const { addIngredient, itemChange, getRecipes, toggleRecipe } = this;
+    const { ingredients, recipes, groceryList } = this.state;
     return (
       <div className='app-container'>
         <img className='title' src="logo.png"></img>
         <div className="container">
-          <IngredientList onItemChange={this.itemChange.bind(this)}
-                              listName="Ingredients"
-                           ingredients={this.state.ingredients}
-                            getRecipes={this.getRecipes.bind(this)}/>
-          <Recipes recipes={this.state.recipes}
-               ingredients={this.state.ingredients}
-              toggleRecipe={this.toggleRecipe.bind(this)} />
-          <GroceryList  ingredients={this.state.ingredients}
-                               list={this.state.groceryList}/>
+          <IngredientList addIngredient={addIngredient}
+                           onItemChange={itemChange}
+                               listName="Ingredients"
+                            ingredients={ingredients}
+                             getRecipes={getRecipes}/>
+          <Recipes recipes={recipes}
+               ingredients={ingredients}
+              toggleRecipe={toggleRecipe} />
+          <GroceryList  ingredients={ingredients}
+                               list={groceryList}/>
         </div>
       </div>)
   }

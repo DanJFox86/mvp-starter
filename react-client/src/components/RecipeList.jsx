@@ -8,7 +8,7 @@ class RecipeList extends React.Component {
   }
 
   render () {
-    let { ingredients, toggleRecipe, listName, recipes } = this.props;
+    const { ingredients, toggleRecipe, listName, recipes } = this.props;
     let recipeList = 'No recipes available';
 
     if (recipes.length > 0) {

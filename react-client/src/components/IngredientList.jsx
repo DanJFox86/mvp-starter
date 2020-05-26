@@ -3,7 +3,7 @@ import ListItem from './ListItem.jsx';
 
 const IngredientList = (props) => {
 
-  const { ingredients, listName, onItemChange, getRecipes } = props;
+  const { ingredients, addIngredient, listName, onItemChange, getRecipes } = props;
   let ingredientOptions = [];
 
   for (let id in ingredients.all) {
@@ -17,6 +17,7 @@ const IngredientList = (props) => {
         {ingredientOptions}
       </select>
       <button className="get-recipe-button" onClick={getRecipes}><h1>Find Recipes!</h1></button>
+      <button className="add-ingredient-button" onClick={addIngredient}><h1>Add Ingredient</h1></button>
     </div>
   );
 }
