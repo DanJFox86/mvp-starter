@@ -86,47 +86,65 @@ const findRecipes = (ingList, callback) => {
 
 const recipeInfoSort = (recipeTracker, ingList, callback) => {
   // console.log(recipes);
-  let recipes = [];
+  let list = {};
   for (let id in recipeTracker) {
-    recipes.push(recipeTracker[id]);
+    list[id] = recipeTracker[id];
   }
   let sortedRecipes = {
-    recipes,
+    list,
     all: [],
     most: [],
     some: []
   };
   let ingredientIds = ingList.map((selectedIng) => Number(selectedIng));
 
-  // console.log('RECIPES YOU CAN POSSIBLY MAKE:  ', recipes)
+  console.log('RECIPES YOU CAN POSSIBLY MAKE:  ', list)
   // console.log('INGREDIENTS ON HAND    ', ingredientIds);
-  recipes.forEach((recipe) => {
-    // console.log(typeof recipe.ingredients[0])
-    let ingTotal = recipe.ingredients.length;
+  for (let id in list) {
+    let ingTotal = list[id].ingredients.length;
     let haveIngredient = 0;
-    recipe.ingredients.forEach((ing) => {
+    list[id].ingredients.forEach((ing) => {
       if (ingredientIds.includes(ing)) {
-        console.log('you have this ingredient with id: ', ing)
         haveIngredient++;
       }
     });
     let haveIngPercentage = haveIngredient / ingTotal;
     // console.log('You have ', haveIngPercentage * 100, '% of the necessary ingredients for ', recipe.name)
     if (haveIngPercentage === 1) {
-      sortedRecipes.all.push(recipe.id);
+      sortedRecipes.all.push(Number(id));
     } else if (haveIngPercentage >= .5) {
-      sortedRecipes.most.push(recipe.id);
+      sortedRecipes.most.push(Number(id));
     } else {
-      sortedRecipes.some.push(recipe.id);
+      sortedRecipes.some.push(Number(id));
     }
-  });
+  }
+  // list.forEach((recipe) => {
+  //   // console.log(typeof recipe.ingredients[0])
+  //   let ingTotal = recipe.ingredients.length;
+  //   let haveIngredient = 0;
+  //   recipe.ingredients.forEach((ing) => {
+  //     if (ingredientIds.includes(ing)) {
+  //       console.log('you have this ingredient with id: ', ing)
+  //       haveIngredient++;
+  //     }
+  //   });
+  //   let haveIngPercentage = haveIngredient / ingTotal;
+  //   // console.log('You have ', haveIngPercentage * 100, '% of the necessary ingredients for ', recipe.name)
+  //   if (haveIngPercentage === 1) {
+  //     sortedRecipes.all.push(recipe.id);
+  //   } else if (haveIngPercentage >= .5) {
+  //     sortedRecipes.most.push(recipe.id);
+  //   } else {
+  //     sortedRecipes.some.push(recipe.id);
+  //   }
+  // });
   sortedRecipes.most.sort((a, b) => {
     return b.haveIngPercentage - a.haveIngPercentage;
   });
   sortedRecipes.some.sort((a, b) => {
     return b.haveIngPercentage - a.haveIngPercentage;
   });
-  // console.log(sortedRecipes);
+  console.log(sortedRecipes);
   callback(null, sortedRecipes);
 }
 

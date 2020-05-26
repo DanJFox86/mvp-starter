@@ -17,9 +17,8 @@ class App extends React.Component {
       items: [],
       basics: [],
       selectedBasics: [],
-      selectedIngredients: [],
-      possibleRecipes: {
-        recipes: [],
+      recipes: {
+        list: {},
         all: [],
         most: [],
         some: []
@@ -39,14 +38,6 @@ class App extends React.Component {
         this.setState({
           ingredients
         });
-        // $.ajax({
-        //   url: '/basics',
-        //   success: (basics) => {
-        //   },
-        //   error: (err) => {
-        //     console.log('err', err);
-        //   }
-        // });
       },
       error: (err) => {
         console.log('err', err);
@@ -57,17 +48,16 @@ class App extends React.Component {
 
   getRecipes() {
     let data = { ingredientIds: Object.keys(this.state.ingredients.selected) };
-    console.log('heres what we got back', data)
     $.post({
       url: '/getRecipes',
       method: 'POST',
       data,
-      success: (possibleRecipes) => {
-        console.log('SUCCESS, got recipe info back')
-        // console.log(possibleRecipes)
+      success: (recipes) => {
+        console.log('SUCCESS, got recipe info back');
+        console.log(recipes)
         let groceryList = [];
         this.setState({
-          possibleRecipes,
+          recipes,
           groceryList: [],
           selectedRecipes: []
         });
@@ -108,18 +98,11 @@ class App extends React.Component {
   toggleRecipe(e) {
     let { recipe_id } = e.target.dataset;
     recipe_id = Number(recipe_id);
-    let newPossibleRecipes = _.cloneDeep(this.state.possibleRecipes);
-    for (let recipe of newPossibleRecipes.recipes) {
-      if (recipe.id === recipe_id) {
-        recipe.isSelected = !recipe.isSelected;
-        var groceryList = this.updateGroceries(recipe);
-        break;
-      }
-    }
+    let newRecipes = _.cloneDeep(this.state.recipes);
+    newRecipes.list[recipe_id].isSelected = !newRecipes.list[recipe_id].isSelected;
     // let groceryList = this.updateGroceries();
     this.setState({
-      possibleRecipes: newPossibleRecipes,
-      groceryList
+      recipes: newRecipes
     });
   }
 
@@ -171,9 +154,6 @@ class App extends React.Component {
   }
 
   render () {
-    let selectedIngredients = this.state.selectedIngredients.map((ingredient) => {
-      return ingredient.name;
-    });
     return (
       <div className='app-container'>
         <img className='title' src="logo.png"></img>
@@ -182,10 +162,9 @@ class App extends React.Component {
                               listName="Ingredients"
                            ingredients={this.state.ingredients}
                             getRecipes={this.getRecipes.bind(this)}/>
-          <Recipes recipeInfo={this.state.possibleRecipes}
-                     selected={selectedIngredients}
-               posIngredients={this.state.items}
-                 toggleRecipe={this.toggleRecipe.bind(this)} />
+          <Recipes recipes={this.state.recipes}
+               ingredients={this.state.ingredients}
+              toggleRecipe={this.toggleRecipe.bind(this)} />
           <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
         </div>
       </div>)

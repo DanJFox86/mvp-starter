@@ -9,40 +9,34 @@ class Recipes extends React.Component {
   }
 
   filterRecipes(type) {
-    return this.props.recipeInfo.recipes.filter((recipe) => {
-      if (this.props.recipeInfo[type].includes(recipe.id)) {
-        return true;
-      }
-      return false;
+    return this.props.recipes[type].map((id) => {
+      return this.props.recipes.list[Number(id)];
     });
   }
   render() {
-    // console.log(`Most recipes:    `, this.props.recipes.most);
-    // console.log(this.props.recipeInfo)
     let allRecipes = this.filterRecipes('all');
     let mostRecipes = this.filterRecipes('most');
     let someRecipes = this.filterRecipes('some');
-    let { posIngredients, selected, toggleRecipe } = this.props;
+    let { ingredients, toggleRecipe } = this.props;
     return (
       <div className="recipes-container">
         <div className="all">
           <div className="header"> ALL</div>
-          <RecipeList posIngredients={posIngredients}
-                            selected={selected}
-                             recipes={allRecipes}
-                        toggleRecipe={toggleRecipe}
-                            listName="all" />
+          <RecipeList ingredients={ingredients}
+                          recipes={allRecipes}
+                     toggleRecipe={toggleRecipe}
+                         listName="all" />
         </div>
         <div className="most">
           <div className="header"> MOST</div>
-          <RecipeList  selected={selected}
+          <RecipeList  ingredients={ingredients}
                         recipes={mostRecipes}
                    toggleRecipe={toggleRecipe}
                        listName="most" />
         </div>
         <div className="some">
           <div className="header"> SOME</div>
-          <RecipeList  selected={selected}
+          <RecipeList  ingredients={ingredients}
                         recipes={someRecipes}
                    toggleRecipe={toggleRecipe}
                        listName="some" />

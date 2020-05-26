@@ -45,7 +45,7 @@ app.post('/getRecipes', (req, res) => {
       }
     });
   } else {
-    res.send({ recipes: [],
+    res.send({ list: {},
                    all: [],
                   most: [],
                   some: []

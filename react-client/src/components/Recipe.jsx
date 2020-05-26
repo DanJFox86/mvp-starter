@@ -9,27 +9,23 @@ class Recipe extends React.Component {
 
   render() {
 
-    let { posIngredients } = this.props;
-    let { id, name, ingredients, isSelected } = this.props.recipe;
-    // let button = this.props.listName !== 'all' ? (<button className="recipe-check"
-    //                                              onClick={this.props.toggleRecipe}
-    //                                                   id={id}
-    //                                            data-id={id}>{isSelected ? "-" : "+"}</button>) : '';
-    console.log('ingredient list for ', name);
-    console.log(ingredients)
-    ingredients = ingredients.map((ingredient) => {
-      let className = `ingredient${this.props.selected.includes(ingredient.id) ? '-present' : ''}`
+    const { ingredients, recipe, toggleRecipe } = this.props;
+    const { id, name, isSelected } = recipe;
+
+    const ingredientList = recipe.ingredients.map((ingredientId) => {
+      const className = `ingredient${ingredients.selected[ingredientId] !== undefined ? '-present' : ''}`;
       return (<div className={className}
-              data-recipe_id={id}>- {ingredient.name}</div>)
+              data-recipe_id={id}
+                     onClick={toggleRecipe}>- {ingredients.all[ingredientId]}</div>);
     });
 
-    let recipeClassName = `recipe${isSelected ? ' selected' : ''}`;
+    const recipeClassName = `recipe${isSelected ? ' selected' : ''}`;
     // console.log(`recipe id #${id} is ${isSelected ? 'selected' : 'not selected'}`)
     // console.log(`Creating recipe DOM object for:       `, this.props.recipe);
     return (
       <div className={recipeClassName}
       data-recipe_id={id}
-             onClick={this.props.toggleRecipe}>
+             onClick={toggleRecipe}>
         <div className="recipe-top"
         data-recipe_id={id}>
           <div className="recipe-name"
@@ -40,7 +36,7 @@ class Recipe extends React.Component {
         </div>
         <div className="recipe-ingredients"
         data-recipe_id={id}>
-          {ingredients}
+          {ingredientList}
         </div>
       </div>
     );
