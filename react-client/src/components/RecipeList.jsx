@@ -8,9 +8,9 @@ class RecipeList extends React.Component {
   }
 
   render () {
-    // console.log(this.props.recipes);
     let { ingredients, toggleRecipe, listName, recipes } = this.props;
     let recipeList = 'No recipes available';
+
     if (recipes.length > 0) {
       recipeList = recipes.map((recipe) => {
         return (

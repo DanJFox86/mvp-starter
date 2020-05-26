@@ -1,17 +1,14 @@
 import React from 'react';
 import ListItem from './ListItem.jsx';
 
-function IngredientList(props) {
+const IngredientList = (props) => {
+
   const { ingredients, listName, onItemChange, getRecipes } = props;
-  // console.log('here are the ingredients ', ingredients);
   let ingredientOptions = [];
-  // console.log('ingredient all: ',ingredients.all)
-  // console.log(Object.keys(ingredients.all))
+
   for (let id in ingredients.all) {
-    // console.log(id)
     ingredientOptions.push((<ListItem id={id} name={ingredients.all[id]}/>))
   }
-  // console.log('ingredient options', ingredientOptions)
 
   return (
     <div className="ingredient-list">

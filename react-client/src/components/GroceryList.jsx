@@ -8,16 +8,22 @@ class GroceryList extends React.Component {
   }
 
   render () {
-    console.log(this.props.list.length)
-    let groceryList = this.props.list.length > 0 ? this.props.list.reduce((acc, item) => {
-      acc.push(`${item.name}`);
-      return acc;
-    }, []) : 'No groceries yet';
+    let { list, ingredients } = this.props;
+    let groceryList = 'No groceries yet';
+    for (let id in list) {
+      if (typeof groceryList === 'string') {
+        groceryList = [];
+      }
+      groceryList.push(ingredients.all[id]);
+    }
+    if (typeof groceryList === 'object') {
+      groceryList = groceryList.join('\n');
+    }
 
     return (
       <div className="groceryList">
         <div>GROCERY LIST</div>
-        <textarea rows={Math.max(20, groceryList.length)} value={typeof groceryList === 'object' ? groceryList.join('\n') : groceryList}>
+        <textarea rows={Math.max(20, Object.keys(list).length)} value={groceryList}>
         </textarea>
       </div>
     );

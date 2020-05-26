@@ -5,7 +5,6 @@ class Recipes extends React.Component {
 
   constructor(props) {
     super(props);
-    // this.recipes = this.filterRecipes.bind(this);
   }
 
   filterRecipes(type) {
@@ -30,16 +29,16 @@ class Recipes extends React.Component {
         <div className="most">
           <div className="header"> MOST</div>
           <RecipeList  ingredients={ingredients}
-                        recipes={mostRecipes}
-                   toggleRecipe={toggleRecipe}
-                       listName="most" />
+                           recipes={mostRecipes}
+                      toggleRecipe={toggleRecipe}
+                          listName="most" />
         </div>
         <div className="some">
           <div className="header"> SOME</div>
           <RecipeList  ingredients={ingredients}
-                        recipes={someRecipes}
-                   toggleRecipe={toggleRecipe}
-                       listName="some" />
+                           recipes={someRecipes}
+                      toggleRecipe={toggleRecipe}
+                          listName="some" />
         </div>
       </div>)
   }

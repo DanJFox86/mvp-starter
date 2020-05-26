@@ -53,12 +53,9 @@ class App extends React.Component {
       method: 'POST',
       data,
       success: (recipes) => {
-        console.log('SUCCESS, got recipe info back');
-        console.log(recipes)
-        let groceryList = [];
         this.setState({
           recipes,
-          groceryList: [],
+          groceryList: {},
           selectedRecipes: []
         });
       }
@@ -66,8 +63,6 @@ class App extends React.Component {
   }
 
   itemChange(e) {
-    // console.log('CHANGING ITEMS')
-    // console.log(this.state.ingredients)
     const { options } = e.target;
     let newIngredients = _.cloneDeep(this.state.ingredients);
     let newSelected = {};
@@ -76,33 +71,48 @@ class App extends React.Component {
         newSelected[options[i].value] = true;
       }
     }
-    console.log(newSelected);
     newIngredients.selected = newSelected;
-    // console.log(newIngredients)
     this.setState({
       ingredients: newIngredients
     });
-    // if (e.target.getAttribute('class') === 'MultiBasics'){
-    //   // console.log('changing selection for MultiBasics');
-    //   this.setState({
-    //     selectedBasics: value
-    //   });
-    // } else if (e.target.getAttribute('class') === 'MultiIngredients'){
-    //   // console.log('changing selection for MultiBasics');
-    //   this.setState({
-    //     selectedIngredients: value
-    //   });
-    // }
   }
 
   toggleRecipe(e) {
-    let { recipe_id } = e.target.dataset;
-    recipe_id = Number(recipe_id);
+    const { recipe_id } = e.target.dataset;
+    const id = Number(recipe_id);
     let newRecipes = _.cloneDeep(this.state.recipes);
-    newRecipes.list[recipe_id].isSelected = !newRecipes.list[recipe_id].isSelected;
-    // let groceryList = this.updateGroceries();
+    let newGroceryList = _.cloneDeep(this.state.groceryList);
+    const { ingredients } = this.state;
+
+    newRecipes.list[id].isSelected = !newRecipes.list[id].isSelected;
+
+    if (newRecipes.list[id].isSelected) {
+      for (let ingredientId of newRecipes.list[id].ingredients) {
+        if (!ingredients.selected[ingredientId]) {
+          if (!newGroceryList[ingredientId]) {
+            newGroceryList[ingredientId] = 0;
+          }
+          newGroceryList[ingredientId] += 1;
+        } else {
+          if (newGroceryList[ingredientId]) {
+            delete newGroceryList[ingredientId];
+          }
+        }
+      }
+    } else {
+      for (let ingredientId of newRecipes.list[id].ingredients) {
+        if (!ingredients.selected[ingredientId]) {
+          newGroceryList[ingredientId] -= 1;
+          if (newGroceryList[ingredientId] === 0) {
+            delete newGroceryList[ingredientId];
+          }
+        }
+      }
+    }
+
     this.setState({
-      recipes: newRecipes
+      recipes: newRecipes,
+      groceryList: newGroceryList
     });
   }
 
@@ -110,6 +120,7 @@ class App extends React.Component {
     // go thru each recipe
     // -- if selected go thru each ingredient
     // ---- If ingredient is not in grocery list and user does not have it, add ingredient id to list
+    console.log('UPDATING GROCERY LIST')
     let newGroceryList = _.cloneDeep(this.state.groceryList);
     console.log(recipe)
     if (recipe.isSelected) {
@@ -165,7 +176,9 @@ class App extends React.Component {
           <Recipes recipes={this.state.recipes}
                ingredients={this.state.ingredients}
               toggleRecipe={this.toggleRecipe.bind(this)} />
-          <GroceryList onGroceryChange={this.onGroceryChange.bind(this)} list={this.state.groceryList}/>
+          <GroceryList onGroceryChange={this.onGroceryChange.bind(this)}
+                           ingredients={this.state.ingredients}
+                                  list={this.state.groceryList}/>
         </div>
       </div>)
   }
