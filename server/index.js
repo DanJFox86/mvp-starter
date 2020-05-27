@@ -28,7 +28,7 @@ app.post('/addIngredient', (req, res) => {
   console.log(req.body);
   db.addIngredient(req.body, (err, response) => {
     if (err) {
-      res.send({ err });
+      res.send({ err, message: null, response });
     } else {
       res.send({ err: null,
              message: 'success, ingredient has been added', response });
