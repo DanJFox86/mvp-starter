@@ -22,6 +22,20 @@ app.get('/ingredients', (req, res) => {
   });
 });
 
+app.post('/addIngredient', (req, res) => {
+  console.log(`Received ${req.method} request from ${req.url}`);
+  let obj = req.body;
+  console.log(req.body);
+  db.addIngredient(req.body, (err, response) => {
+    if (err) {
+      res.send({ err });
+    } else {
+      res.send({ err: null,
+             message: 'success, ingredient has been added', response });
+    }
+  })
+});
+
 app.get('/basics', (req, res) => {
   db.selectBasics((err, data) => {
     if(err) {

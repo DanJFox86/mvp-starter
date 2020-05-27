@@ -2,9 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import _ from 'lodash';
+import swal from '@sweetalert/with-react'
 import IngredientList from './components/IngredientList.jsx';
 import Recipes from './components/Recipes.jsx';
 import GroceryList from './components/GroceryList.jsx';
+import AddIngModal from './components/AddIngModal.jsx';
+
+
 
 class App extends React.Component {
   constructor(props) {
@@ -23,10 +27,16 @@ class App extends React.Component {
         some: []
       },
       selectedRecipes: [],
-      groceryList: {}
+      groceryList: {},
+      modal: {
+        addIngredient: {
+          name: 'INVALID'
+        }
+      }
     }
     this.getRecipes = this.getRecipes.bind(this);
     this.addIngredient = this.addIngredient.bind(this);
+    this.onNewIngChange = this.onNewIngChange.bind(this);
     this.updateGroceries = this.updateGroceries.bind(this);
     this.itemChange = this.itemChange.bind(this);
     this.toggleRecipe = this.toggleRecipe.bind(this);
@@ -44,11 +54,89 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
+  }
 
+  updateServer() {
+    const name = this.state.modal.addIngredient.name.replace(/[^a-zA-Z ]/g, '');
+    console.log(name)
+    const data = {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      }
+
+    }
+    return fetch(`/addIngredient`, data);
+  }
+
+  onNewIngChange(e) {
+    console.log(e.target.value);
+
+    let newModal = _.cloneDeep(this.state.modal);
+    newModal.addIngredient.name = e.target.value;
+    this.setState({ modal: newModal });
   }
 
   addIngredient(e) {
     console.log(e.target.getAttribute('class'));
+    swal({
+        text: 'Add Ingredient',
+        button: 'Add',
+        content: (
+          <div>
+            <AddIngModal name={this.state.modal.addIngredient.nam}
+               onNewIngChange={this.onNewIngChange}
+            />
+          </div>
+        )
+      })
+      .then((send) => {
+        return this.updateServer();
+      })
+      .then((response) => response.json())
+      .then((json) => {
+        console.log('received response from server')
+        console.log(json);
+      })
+      // .then((name) => {
+      //   if (!name) throw null;
+      //   console.log(name);
+      //   let modal = _.cloneDeep(this.state.modal);
+      //   modal.addIngredient.name = name;
+      //   modal.addIngredient.name.replace(/[^a-zA-Z ]/g, '');
+      //   // this.setState({modal: modal})
+      //   // return this.updateServer(modal);
+      // })
+      // .then(results => {
+      //   return results.json();
+      // })
+      // .then(json => {
+      //   console.log(json)
+      //   // const movie = json.results[0];
+
+      //   // if (!movie) {
+      //   //   return swal("No movie was found!");
+      //   // }
+
+      //   // const name = movie.trackName;
+      //   // const imageURL = movie.artworkUrl100;
+
+      //   // swal({
+      //   //   title: "Top result:",
+      //   //   text: name,
+      //   //   icon: imageURL,
+      //   // });
+      // })
+      .catch(err => {
+        if (err) {
+          swal("Oh noes!", "The AJAX request failed!", "error");
+        } else {
+          swal.stopLoading();
+          swal.close();
+        }
+      });
   }
 
   getRecipes() {

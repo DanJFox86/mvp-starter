@@ -107,10 +107,35 @@ const recipeInfoSort = (recipeTracker, ingList, callback) => {
   callback(null, sortedRecipes);
 }
 
+const addIngredient = ({ name }, callback) => {
+  console.log(name);
+  connection.query(`SELECT * FROM INGREDIENTS WHERE name="${name}"`, (err, response) => {
+    if (err) {
+      callback('Error communicating with database', null);
+    } else {
+      console.log(response);
+      if (response.length > 0) {
+        callback('Error: ingredient already exists', null);
+      } else {
+        connection.query(`INSERT INTO INGREDIENTS(name) VALUES("${name}")`, (err, response) => {
+          if (err) {
+            console.log(err)
+            callback('Could not save new ingredient to database', null);
+          } else {
+            console.log(response.insertId)
+            callback(null, response.insertId);
+          }
+        });
+      }
+    }
+  });
+}
+
 
 
 module.exports = { selectAll,
                    selectBasics,
                    findRecipes,
+                   addIngredient,
                    connection
 };

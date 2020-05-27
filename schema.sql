@@ -58,7 +58,7 @@ CREATE TABLE dietaryReq (
 DROP TABLE IF EXISTS ingredients;
 
 CREATE TABLE ingredients (
-  id tinyint NOT NULL,
+  id tinyint AUTO_INCREMENT,
   name varchar(200) NOT NULL,
   PRIMARY KEY (id)
 );
