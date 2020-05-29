@@ -7,6 +7,48 @@ import IngredientList from './components/IngredientList.jsx';
 import Recipes from './components/Recipes.jsx';
 import GroceryList from './components/GroceryList.jsx';
 import AddIngModal from './components/AddIngModal.jsx';
+// import Trie from './components/Trie.js';
+
+var Trie = function() {
+  this.storage = {};
+};
+
+Trie.prototype.insert = function(word) {
+  if (word === '') return;
+  let node = this.storage;
+  while (word.length) {
+      if (!node[word[0]]) node[word[0]] = {};
+      node = node[word[0]];
+      word = word.slice(1);
+  }
+  node['end'] = true;
+};
+
+Trie.prototype.search = function(word) {
+  if (word === '') return true;
+  let node = this.storage;
+  while (word.length) {
+      if (!node[word[0]]) {
+          return false;
+      }
+      node = node[word[0]];
+      word = word.slice(1);
+  }
+  return node['end'] ? true : false;
+};
+
+Trie.prototype.startsWith = function(prefix) {
+  if (prefix === '') return true;
+  let node = this.storage;
+  while (prefix.length) {
+      if (!node[prefix[0]]) {
+          return false;
+      }
+      node = node[prefix[0]];
+      prefix = prefix.slice(1);
+  }
+  return true;
+};
 
 
 
@@ -15,6 +57,7 @@ class App extends React.Component {
     super(props);
     this.state = {
       ingredients: {
+        Trie: {},
         all: {},
         selected: {}
       },
@@ -46,6 +89,10 @@ class App extends React.Component {
     $.ajax({
       url: '/ingredients',
       success: (ingredients) => {
+        ingredients.Trie = new Trie();
+        for (let key in ingredients.all) {
+          ingredients.Trie.insert(ingredients.all[key].slice());
+        }
         this.setState({
           ingredients
         });
@@ -71,8 +118,14 @@ class App extends React.Component {
   }
 
   onNewIngChange(e) {
-    let newModal = _.cloneDeep(this.state.modal);
+    const { modal, ingredients } = this.state;
+    let newModal = _.cloneDeep(modal);
     newModal.addIngredient.name = e.target.value;
+    console.log(ingredients.Trie.startsWith(e.target.value.slice()));
+    // if (ingredients.Trie.startsWith(e.target.value.slice())) {
+    //   ingredients.Trie.allStartsWith(e.target.value.slice());
+    // }
+
     this.setState({ modal: newModal });
   }
 
@@ -93,15 +146,13 @@ class App extends React.Component {
       })
       .then((response) => response.json())
       .then((json) => {
-        const { err, message, response } = json;
+        const { err, message, ingredients } = json;
         if (err) {
           swal({text: err, icon: 'warning', button: 'close'});
         } else {
-          let newIngredients = _.cloneDeep(this.state.ingredients);
-          newIngredients.all[Number(response)] = this.state.modal.addIngredient.name;
-          this.setState({ ingredients: newIngredients }, () => {
+          this.setState({ ingredients }, () => {
             swal({
-              text: message,
+              text: 'Ingredient Successfully Added',
               icon: 'success',
            buttons: {
                       close: 'close',

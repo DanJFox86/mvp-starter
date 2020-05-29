@@ -8,19 +8,37 @@ const connection = mysql.createConnection({
   database : 'refrigeratorducer'
 });
 
+let ingredients;
+
 const selectAll = function(callback) {
-  connection.query('SELECT * FROM ingredients', function(err, ingredients, fields) {
-    if(err) {
-      callback(err, null);
-    } else {
-      let data = {};
-      for (let ingredient of ingredients) {
-        data[ingredient.id] = ingredient.name;
+
+  if (ingredients === undefined) {
+    ingredients = {};
+    ingredients.all = {};
+    connection.query('SELECT * FROM ingredients', function(err, list, fields) {
+      if(err) {
+        callback(err, null);
+      } else {
+        for (let ingredient of list) {
+          ingredients.all[ingredient.id] = ingredient.name;
+        }
+        console.log(ingredients)
+        callback(null, ingredients);
       }
-      callback(null, data);
-    }
-  });
+    });
+  } else {
+    callback(null, ingredients);
+  }
 };
+
+selectAll((err, response) => {
+  if (!err) {
+    console.log('Ingredient List initialized.');
+  } else {
+    console.log('Ingredient list refresh failed: trying again in 5 seconds');
+    setTimeout(selectAll, 5000);
+  }
+});
 
 const selectBasics = function(callback) {
   connection.query('SELECT ingredients.name, ingredients.id FROM basics, ingredients where basics.ingredient_id = ingredients.id;', function(err, results, fields) {
@@ -122,8 +140,9 @@ const addIngredient = ({ name }, callback) => {
             console.log(err)
             callback('Could not save new ingredient to database', null);
           } else {
-            console.log(response.insertId)
-            callback(null, response.insertId);
+            const id = response.insertId;
+            ingredients.all[id] = name;
+            callback(null, ingredients);
           }
         });
       }
