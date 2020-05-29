@@ -50,6 +50,31 @@ Trie.prototype.startsWith = function(prefix) {
   return true;
 };
 
+Trie.prototype.allStartsWith = function(prefix) {
+  if (prefix === '') return [];
+  let node = this.storage;
+  let result = [];
+
+  let helper = (node, str) => {
+    if (node['end']) {
+      result.push(prefix + str);
+    }
+    for (let key in node) {
+      helper(node[key], str + key)
+    }
+  }
+
+  if (this.startsWith(prefix)) {
+    let myPrefix = prefix;
+    while (myPrefix.length > 0) {
+      node = node[myPrefix[0]];
+      myPrefix = myPrefix.slice(1);
+    }
+    helper(node, '');
+  }
+  return result;
+};
+
 
 
 class App extends React.Component {
@@ -73,9 +98,12 @@ class App extends React.Component {
       groceryList: {},
       modal: {
         addIngredient: {
-          name: 'INVALID'
+          name: '',
+          possibleIngNames: []
         }
-      }
+      },
+      name: '',
+      newIngStartsWith: []
     }
     this.getRecipes = this.getRecipes.bind(this);
     this.addIngredient = this.addIngredient.bind(this);
@@ -83,6 +111,7 @@ class App extends React.Component {
     this.updateGroceries = this.updateGroceries.bind(this);
     this.itemChange = this.itemChange.bind(this);
     this.toggleRecipe = this.toggleRecipe.bind(this);
+    this.onAddIngNameChange = this.onAddIngNameChange.bind(this);
   }
 
   componentDidMount() {
@@ -104,7 +133,7 @@ class App extends React.Component {
   }
 
   updateServer() {
-    const name = this.state.modal.addIngredient.name.replace(/[^a-zA-Z ]/g, '');
+    const { name } = this.state;
     const data = {
       method: 'POST',
       body: JSON.stringify({ name }),
@@ -118,27 +147,42 @@ class App extends React.Component {
   }
 
   onNewIngChange(e) {
-    const { modal, ingredients } = this.state;
-    let newModal = _.cloneDeep(modal);
-    newModal.addIngredient.name = e.target.value;
-    console.log(ingredients.Trie.startsWith(e.target.value.slice()));
-    // if (ingredients.Trie.startsWith(e.target.value.slice())) {
-    //   ingredients.Trie.allStartsWith(e.target.value.slice());
-    // }
+  //   const { modal, ingredients } = this.state;
+  //   console.log('OLD:  ', this.state.name);
+  //   // let newModal = _.cloneDeep(this.state.modal);
+  //   // // console.log(e.target.value)
+  //   // this.state.name = e.target.value;
+  //   console.log('NEW:  ', e.target.value);
+  //   // console.log()
+  //   // console.log(ingredients.Trie.allStartsWith(e.target.value));
+  //   let newIngStartsWith = [];
+  //   if (ingredients.Trie.startsWith(e.target.value.slice())) {
+  //     newIngStartsWith = ingredients.Trie.allStartsWith(e.target.value.slice());
+  //   }
+  //   console.log(newIngStartsWith);
 
-    this.setState({ modal: newModal });
+  //   this.setState({ name: e.target.value, newIngStartsWith  });
+  }
+
+  onAddIngNameChange(name, callback) {
+    // let newModal = _.cloneDeep(this.state.modal.addIngredient);
+    // console.log(newModal)
+    // newModal.name = name;
+    // this.setState({ modal: newModal });
+    this.setState({ name }, callback);
   }
 
   addIngredient(e) {
+    // let name = this.state.name;
+    console.log('changing name')
     swal({
         text: 'Add Ingredient',
         button: 'Add',
         content: (
-          <div>
-            <AddIngModal name={this.state.modal.addIngredient.nam}
-               onNewIngChange={this.onNewIngChange}
-            />
-          </div>
+          <AddIngModal onAddIngNameChange={this.onAddIngNameChange.bind(this)}
+                              ingredients={this.state.ingredients}
+                                    modal={this.state.modal.addIngredient}
+                                     name={this.state.name}/>
         )
       })
       .then(() => {
@@ -178,6 +222,7 @@ class App extends React.Component {
         return;
       })
       .catch((err) => {
+        console.log(err)
         if (err) {
           swal("Oh noes!", "The AJAX request failed!", "error");
         } else {

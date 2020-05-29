@@ -39,4 +39,29 @@ Trie.prototype.startsWith = function(prefix) {
   return true;
 };
 
+Trie.prototype.allStartsWith = function(prefix) {
+  if (prefix === '') return [];
+  let node = this.storage;
+  let result = [];
+
+  let helper = (node, str) => {
+    if (node['end']) {
+      result.push(str));
+    }
+    for (let key in node) {
+      helper(node[key], str + key)
+    }
+  }
+
+  if (this.startsWith(prefix)) {
+    let myPrefix = prefix;
+    while (myPrefix.length > 0) {
+      node = node[myPrefix[0]];
+      myPrefix = myPrefix.slice(1);
+    }
+    helper(node, '');
+  }
+  return result;
+};
+
 export default Trie;
