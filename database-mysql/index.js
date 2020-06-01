@@ -128,7 +128,7 @@ const recipeInfoSort = (recipeTracker, ingList, callback) => {
 const addIngredient = ({ name }, callback) => {
   let cleanName = name.replace(/[^a-zA-Z ]/g, '');
   if (cleanName.length === 0 || cleanName !== name) {
-    callback('Invalid ingredient name, no special characters', null);
+    callback('Invalid ingredient name, no special characters or numbers', null);
   } else {
     connection.query(`SELECT * FROM INGREDIENTS WHERE name="${name}"`, (err, response) => {
       if (err) {

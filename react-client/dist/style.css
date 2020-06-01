@@ -17,12 +17,25 @@ body {
   width: 100vw;
   height: 80vh;
 }
-
+/*
 .modal-container {
   display: flex;
   flex-direction: column;
   height: 400px;
   width: 500px;
+} */
+
+.add {
+  border-radius: 10px;
+}
+.add.add {
+  background-color: green;
+}
+.add.close {
+  background-color: red;
+}
+.add.another {
+  background-color: darkgreen;
 }
 
 .ingredient-list {

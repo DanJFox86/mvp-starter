@@ -46,7 +46,7 @@ Trie.prototype.allStartsWith = function(prefix) {
 
   let helper = (node, str) => {
     if (node['end']) {
-      result.push(str));
+      result.push(prefix + str);
     }
     for (let key in node) {
       helper(node[key], str + key)

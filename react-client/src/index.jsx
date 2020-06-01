@@ -2,80 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import _ from 'lodash';
-import swal from '@sweetalert/with-react'
+import swal from '@sweetalert/with-react';
 import IngredientList from './components/IngredientList.jsx';
 import Recipes from './components/Recipes.jsx';
 import GroceryList from './components/GroceryList.jsx';
 import AddIngModal from './components/AddIngModal.jsx';
-// import Trie from './components/Trie.js';
-
-var Trie = function() {
-  this.storage = {};
-};
-
-Trie.prototype.insert = function(word) {
-  if (word === '') return;
-  let node = this.storage;
-  while (word.length) {
-      if (!node[word[0]]) node[word[0]] = {};
-      node = node[word[0]];
-      word = word.slice(1);
-  }
-  node['end'] = true;
-};
-
-Trie.prototype.search = function(word) {
-  if (word === '') return true;
-  let node = this.storage;
-  while (word.length) {
-      if (!node[word[0]]) {
-          return false;
-      }
-      node = node[word[0]];
-      word = word.slice(1);
-  }
-  return node['end'] ? true : false;
-};
-
-Trie.prototype.startsWith = function(prefix) {
-  if (prefix === '') return true;
-  let node = this.storage;
-  while (prefix.length) {
-      if (!node[prefix[0]]) {
-          return false;
-      }
-      node = node[prefix[0]];
-      prefix = prefix.slice(1);
-  }
-  return true;
-};
-
-Trie.prototype.allStartsWith = function(prefix) {
-  if (prefix === '') return [];
-  let node = this.storage;
-  let result = [];
-
-  let helper = (node, str) => {
-    if (node['end']) {
-      result.push(prefix + str);
-    }
-    for (let key in node) {
-      helper(node[key], str + key)
-    }
-  }
-
-  if (this.startsWith(prefix)) {
-    let myPrefix = prefix;
-    while (myPrefix.length > 0) {
-      node = node[myPrefix[0]];
-      myPrefix = myPrefix.slice(1);
-    }
-    helper(node, '');
-  }
-  return result;
-};
-
-
+import Header from './components/Header.jsx';
+import Trie from './components/Trie.js';
 
 class App extends React.Component {
   constructor(props) {
@@ -107,11 +40,12 @@ class App extends React.Component {
     }
     this.getRecipes = this.getRecipes.bind(this);
     this.addIngredient = this.addIngredient.bind(this);
-    this.onNewIngChange = this.onNewIngChange.bind(this);
     this.updateGroceries = this.updateGroceries.bind(this);
     this.itemChange = this.itemChange.bind(this);
     this.toggleRecipe = this.toggleRecipe.bind(this);
     this.onAddIngNameChange = this.onAddIngNameChange.bind(this);
+    this.updateTrie = this.updateTrie.bind(this);
+    this.updateServer = this.updateServer.bind(this);
   }
 
   componentDidMount() {
@@ -132,8 +66,15 @@ class App extends React.Component {
     });
   }
 
-  updateServer() {
-    const { name } = this.state;
+  updateTrie(ingredients) {
+    let newTrie = new Trie();
+    for (let key in ingredients.all) {
+      newTrie.insert(ingredients.all[key].slice());
+    }
+    ingredients.Trie = newTrie;
+  }
+
+  updateServer(name = this.state.name) {
     const data = {
       method: 'POST',
       body: JSON.stringify({ name }),
@@ -146,30 +87,8 @@ class App extends React.Component {
     return fetch(`/addIngredient`, data);
   }
 
-  onNewIngChange(e) {
-  //   const { modal, ingredients } = this.state;
-  //   console.log('OLD:  ', this.state.name);
-  //   // let newModal = _.cloneDeep(this.state.modal);
-  //   // // console.log(e.target.value)
-  //   // this.state.name = e.target.value;
-  //   console.log('NEW:  ', e.target.value);
-  //   // console.log()
-  //   // console.log(ingredients.Trie.allStartsWith(e.target.value));
-  //   let newIngStartsWith = [];
-  //   if (ingredients.Trie.startsWith(e.target.value.slice())) {
-  //     newIngStartsWith = ingredients.Trie.allStartsWith(e.target.value.slice());
-  //   }
-  //   console.log(newIngStartsWith);
-
-  //   this.setState({ name: e.target.value, newIngStartsWith  });
-  }
-
-  onAddIngNameChange(name, callback) {
-    // let newModal = _.cloneDeep(this.state.modal.addIngredient);
-    // console.log(newModal)
-    // newModal.name = name;
-    // this.setState({ modal: newModal });
-    this.setState({ name }, callback);
+  onAddIngNameChange(name) {
+    this.setState({ name });
   }
 
   addIngredient(e) {
@@ -177,12 +96,16 @@ class App extends React.Component {
     console.log('changing name')
     swal({
         text: 'Add Ingredient',
-        button: 'Add',
+        button:
+        {
+          value: 'add',
+          text: 'add',
+          className: 'add add'
+        },
         content: (
           <AddIngModal onAddIngNameChange={this.onAddIngNameChange.bind(this)}
                               ingredients={this.state.ingredients}
-                                    modal={this.state.modal.addIngredient}
-                                     name={this.state.name}/>
+                                    modal={this.state.modal.addIngredient}/>
         )
       })
       .then(() => {
@@ -194,16 +117,21 @@ class App extends React.Component {
         if (err) {
           swal({text: err, icon: 'warning', button: 'close'});
         } else {
+          this.updateTrie(ingredients);
           this.setState({ ingredients }, () => {
             swal({
               text: 'Ingredient Successfully Added',
               icon: 'success',
            buttons: {
-                      close: 'close',
-                 addAnother: {
-                               text: 'Add Another?',
-                              value: 'addAnother'
-                             }
+                      close: {
+                        value: 'close',
+                        className: 'add close'
+                      },
+                      addAnother: {
+                         text: 'Add Another?',
+                        value: 'addAnother',
+                        className: 'add another'
+                      }
                     }
                   })
                 .then((value) => {
@@ -212,9 +140,8 @@ class App extends React.Component {
                       swal.close();
                       break;
                     case 'addAnother':
-                      setTimeout(() => {
-                        this.addIngredient();
-                      }, 0)
+                      swal.close();
+                      this.addIngredient();
                   }
                 });
           });
@@ -310,20 +237,28 @@ class App extends React.Component {
   }
 
   render () {
-    const { addIngredient, itemChange, getRecipes, toggleRecipe } = this;
+    const { addIngredient, itemChange, getRecipes, toggleRecipe, updateServer } = this;
     const { ingredients, recipes, groceryList } = this.state;
     return (
       <div className='app-container'>
-        <img className='title' src="logo.png"></img>
+        <Header/>
         <div className="container">
           <IngredientList addIngredient={addIngredient}
                            onItemChange={itemChange}
                                listName="Ingredients"
                             ingredients={ingredients}
-                             getRecipes={getRecipes}/>
+                             getRecipes={getRecipes}
+                           updateServer={updateServer}/>
+
+
+
           <Recipes recipes={recipes}
                ingredients={ingredients}
               toggleRecipe={toggleRecipe} />
+
+
+
+
           <GroceryList  ingredients={ingredients}
                                list={groceryList}/>
         </div>

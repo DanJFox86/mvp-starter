@@ -25,20 +25,28 @@ class AddIngModal extends React.Component {
     // let { name } = this.state;
     const { ingredients } = this.props;
     // console.log(Trie);
-
-
-    let possibleIng = [];
-    if (ingredients.Trie.startsWith(e.target.value.slice())) {
-      possibleIng = ingredients.Trie.allStartsWith(e.target.value.slice());
+    let str = e.target.value;
+    console.log(str[str.length - 1] === '\n');
+    if (str[str.length - 1] === '\n') {
+      // send name to server immediately
+      // this.props.updateServer(str.slice(0, str.length - 1))
+      //   .then(())
+    } else {
+      let possibleIng = [];
+      if (ingredients.Trie.startsWith(e.target.value.slice())) {
+        possibleIng = ingredients.Trie.allStartsWith(e.target.value.slice());
+      }
+      console.log(possibleIng);
+      this.props.onAddIngNameChange(e.target.value);
+      this.setState({ name: e.target.value, possibleIng });
     }
-    console.log(possibleIng);
-    this.props.onAddIngNameChange(e.target.value);
-    this.setState({ name: e.target.value, possibleIng });
+
+
 
   }
 
   render() {
-    const { modal, name } = this.props;
+    const { modal } = this.props;
     const possibilities = this.state.possibleIng.map((possible) => {
       let id = possible;
       let className = `posName ${id.replace(/[ ]/gi, '')}`;
