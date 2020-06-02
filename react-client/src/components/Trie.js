@@ -5,10 +5,10 @@ var Trie = function() {
 Trie.prototype.insert = function(word) {
   if (word === '') return;
   let node = this.storage;
-  while (word.length) {
-      if (!node[word[0]]) node[word[0]] = {};
-      node = node[word[0]];
-      word = word.slice(1);
+  for (let char of word) {
+    let lc = char.toLowerCase();
+    if (!node[lc]) node[lc] = {};
+    node = node[lc];
   }
   node['end'] = true;
 };
@@ -16,12 +16,12 @@ Trie.prototype.insert = function(word) {
 Trie.prototype.search = function(word) {
   if (word === '') return true;
   let node = this.storage;
-  while (word.length) {
-      if (!node[word[0]]) {
-          return false;
-      }
-      node = node[word[0]];
-      word = word.slice(1);
+  for (let char of word) {
+    let lc = char.toLowerCase();
+    if (!node[lc]) {
+      return false;
+    }
+    node = node[lc];
   }
   return node['end'] ? true : false;
 };
@@ -29,12 +29,12 @@ Trie.prototype.search = function(word) {
 Trie.prototype.startsWith = function(prefix) {
   if (prefix === '') return true;
   let node = this.storage;
-  while (prefix.length) {
-      if (!node[prefix[0]]) {
-          return false;
-      }
-      node = node[prefix[0]];
-      prefix = prefix.slice(1);
+  for (let char of prefix) {
+    let lc = char.toLowerCase();
+    if (!node[lc]) {
+      return false;
+    }
+    node = node[lc];
   }
   return true;
 };
@@ -43,7 +43,6 @@ Trie.prototype.allStartsWith = function(prefix) {
   if (prefix === '') return [];
   let node = this.storage;
   let result = [];
-
   let helper = (node, str) => {
     if (node['end']) {
       result.push(prefix + str);
@@ -54,10 +53,9 @@ Trie.prototype.allStartsWith = function(prefix) {
   }
 
   if (this.startsWith(prefix)) {
-    let myPrefix = prefix;
-    while (myPrefix.length > 0) {
-      node = node[myPrefix[0]];
-      myPrefix = myPrefix.slice(1);
+    let myPrefix = prefix.slice();
+    for (let char of prefix) {
+      node = node[char.toLowerCase()];
     }
     helper(node, '');
   }
