@@ -125,33 +125,51 @@ const recipeInfoSort = (recipeTracker, ingList, callback) => {
   callback(null, sortedRecipes);
 }
 
+const bannedWords = ['select', 'from', 'in'];
+
+const anyBanned = (words) => {
+  for (let i = 0; i < words.length; i++) {
+    if (bannedWords.includes(words[i].toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
 const addIngredient = ({ name }, callback) => {
   let cleanName = name.replace(/[^a-zA-Z ]/g, '');
   if (cleanName.length === 0 || cleanName !== name) {
     callback('Invalid ingredient name, no special characters or numbers', null);
   } else {
-    connection.query(`SELECT * FROM INGREDIENTS WHERE name="${name}"`, (err, response) => {
-      if (err) {
-        callback('Error communicating with database', null);
-      } else {
-        console.log('ATTEMPTED TO PUT INGREDIENT IN DATABASE: ', response);
-        if (response.length > 0) {
-          console.log('ingredient already exists')
-          callback('Error: ingredient already exists', null);
+    let arr = cleanName.split(' ');
+    if (arr.length > 10) {
+      callback('Ingredient name is too long, too many words.', null);
+    } else if (anyBanned(arr)) {
+      callback('Invalid ingredient name: no keywords', null);
+    } else {
+      connection.query(`SELECT * FROM INGREDIENTS WHERE name="${name}"`, (err, response) => {
+        if (err) {
+          callback('Error communicating with database', null);
         } else {
-          connection.query(`INSERT INTO INGREDIENTS(name) VALUES("${name}")`, (err, response) => {
-            if (err) {
-              console.log(err)
-              callback('Could not save new ingredient to database', null);
-            } else {
-              const id = response.insertId;
-              ingredients.all[id] = name;
-              callback(null, ingredients);
-            }
-          });
+          console.log('ATTEMPTED TO PUT INGREDIENT IN DATABASE: ', response);
+          if (response.length > 0) {
+            console.log('ingredient already exists')
+            callback('Error: ingredient already exists', null);
+          } else {
+            connection.query(`INSERT INTO INGREDIENTS(name) VALUES("${name}")`, (err, response) => {
+              if (err) {
+                console.log(err)
+                callback('Could not save new ingredient to database', null);
+              } else {
+                const id = response.insertId;
+                ingredients.all[id] = name;
+                callback(null, ingredients);
+              }
+            });
+          }
         }
-      }
-    });
+      });
+    }
   }
 }
 
