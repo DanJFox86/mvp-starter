@@ -17,6 +17,26 @@ body {
   width: 100vw;
   height: 80vh;
 }
+/*
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  width: 500px;
+} */
+
+.add {
+  border-radius: 10px;
+}
+.add.add {
+  background-color: green;
+}
+.add.close {
+  background-color: red;
+}
+.add.another {
+  background-color: darkgreen;
+}
 
 .ingredient-list {
   display: flex;
@@ -28,13 +48,21 @@ body {
   width: 300px;
   height: 100%;
   text-align: center;
-
 }
 
 .ingListHeader {
   word-wrap: break-word;
   padding: 10px;
   border-bottom: 2px dashed black;
+}
+
+.get-recipe-button {
+  width: 100%;
+  border-radius: 10px;
+}
+.add-ingredient-button {
+  width: 100%;
+  border-radius: 10px;
 }
 
 .multiIngredients {
@@ -66,11 +94,6 @@ select {
   display: flex;
   justify-content: space-between;
   /* margin-right: 4px; */
-}
-
-.get-recipe-button {
-  width: 100%;
-  border-radius: 10px;
 }
 
 .recipe {

@@ -10,16 +10,29 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get('/ingredients', (req, res) => {
+  console.log(`Received ${req.method} request from ${req.url}`);
   db.selectAll((err, ingredients) => {
     if(err) {
       res.sendStatus(500);
     } else {
-      let data = {};
-      data.all = ingredients;
-      data.selected = {};
-      res.json(data);
+      ingredients.selected = {};
+      res.json(ingredients);
     }
   });
+});
+
+app.post('/addIngredient', (req, res) => {
+  console.log(`Received ${req.method} request from ${req.url}`);
+  let obj = req.body;
+  console.log(req.body);
+  db.addIngredient(req.body, (err, ingredients) => {
+    if (err) {
+      res.send({ err, message: err, ingredients });
+    } else {
+      res.send({ err: null,
+             message: 'Successfully Added Ingredient', ingredients });
+    }
+  })
 });
 
 app.get('/basics', (req, res) => {

@@ -8,19 +8,37 @@ const connection = mysql.createConnection({
   database : 'refrigeratorducer'
 });
 
+let ingredients;
+
 const selectAll = function(callback) {
-  connection.query('SELECT * FROM ingredients', function(err, ingredients, fields) {
-    if(err) {
-      callback(err, null);
-    } else {
-      let data = {};
-      for (let ingredient of ingredients) {
-        data[ingredient.id] = ingredient.name;
+
+  if (ingredients === undefined) {
+    ingredients = {};
+    ingredients.all = {};
+    connection.query('SELECT * FROM ingredients', function(err, list, fields) {
+      if(err) {
+        callback(err, null);
+      } else {
+        for (let ingredient of list) {
+          ingredients.all[ingredient.id] = ingredient.name;
+        }
+        console.log(ingredients)
+        callback(null, ingredients);
       }
-      callback(null, data);
-    }
-  });
+    });
+  } else {
+    callback(null, ingredients);
+  }
 };
+
+selectAll((err, response) => {
+  if (!err) {
+    console.log('Ingredient List initialized.');
+  } else {
+    console.log('Ingredient list refresh failed: trying again in 5 seconds');
+    setTimeout(selectAll, 5000);
+  }
+});
 
 const selectBasics = function(callback) {
   connection.query('SELECT ingredients.name, ingredients.id FROM basics, ingredients where basics.ingredient_id = ingredients.id;', function(err, results, fields) {
@@ -70,7 +88,6 @@ const findRecipes = (ingList, callback) => {
 };
 
 const recipeInfoSort = (recipeTracker, ingList, callback) => {
-  // console.log(recipes);
   let list = {};
   for (let id in recipeTracker) {
     list[id] = recipeTracker[id];
@@ -108,10 +125,59 @@ const recipeInfoSort = (recipeTracker, ingList, callback) => {
   callback(null, sortedRecipes);
 }
 
+const bannedWords = ['select', 'from', 'in'];
+
+const anyBanned = (words) => {
+  for (let i = 0; i < words.length; i++) {
+    if (bannedWords.includes(words[i].toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const addIngredient = ({ name }, callback) => {
+  let cleanName = name.replace(/[^a-zA-Z ]/g, '');
+  if (cleanName.length === 0 || cleanName !== name) {
+    callback('Invalid ingredient name, no special characters or numbers', null);
+  } else {
+    let arr = cleanName.split(' ');
+    if (arr.length > 10) {
+      callback('Ingredient name is too long, too many words.', null);
+    } else if (anyBanned(arr)) {
+      callback('Invalid ingredient name: no keywords', null);
+    } else {
+      connection.query(`SELECT * FROM INGREDIENTS WHERE name="${name}"`, (err, response) => {
+        if (err) {
+          callback('Error communicating with database', null);
+        } else {
+          console.log('ATTEMPTED TO PUT INGREDIENT IN DATABASE: ', response);
+          if (response.length > 0) {
+            console.log('ingredient already exists')
+            callback('Error: ingredient already exists', null);
+          } else {
+            connection.query(`INSERT INTO INGREDIENTS(name) VALUES("${name}")`, (err, response) => {
+              if (err) {
+                console.log(err)
+                callback('Could not save new ingredient to database', null);
+              } else {
+                const id = response.insertId;
+                ingredients.all[id] = name;
+                callback(null, ingredients);
+              }
+            });
+          }
+        }
+      });
+    }
+  }
+}
+
 
 
 module.exports = { selectAll,
                    selectBasics,
                    findRecipes,
+                   addIngredient,
                    connection
 };

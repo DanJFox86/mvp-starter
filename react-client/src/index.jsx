@@ -2,19 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import _ from 'lodash';
+import swal from '@sweetalert/with-react';
 import IngredientList from './components/IngredientList.jsx';
 import Recipes from './components/Recipes.jsx';
 import GroceryList from './components/GroceryList.jsx';
+import AddIngModal from './components/AddIngModal.jsx';
+import Header from './components/Header.jsx';
+import Trie from './components/Trie.js';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       ingredients: {
+        Trie: {},
         all: {},
         selected: {}
       },
-      items: [],
       basics: [],
       selectedBasics: [],
       recipes: {
@@ -24,16 +28,34 @@ class App extends React.Component {
         some: []
       },
       selectedRecipes: [],
-      groceryList: {}
+      groceryList: {},
+      modal: {
+        addIngredient: {
+          name: '',
+          possibleIngNames: []
+        }
+      },
+      name: '',
+      newIngStartsWith: []
     }
     this.getRecipes = this.getRecipes.bind(this);
+    this.addIngredient = this.addIngredient.bind(this);
     this.updateGroceries = this.updateGroceries.bind(this);
+    this.itemChange = this.itemChange.bind(this);
+    this.toggleRecipe = this.toggleRecipe.bind(this);
+    this.onAddIngNameChange = this.onAddIngNameChange.bind(this);
+    this.updateTrie = this.updateTrie.bind(this);
+    this.updateServer = this.updateServer.bind(this);
   }
 
   componentDidMount() {
     $.ajax({
       url: '/ingredients',
       success: (ingredients) => {
+        ingredients.Trie = new Trie();
+        for (let key in ingredients.all) {
+          ingredients.Trie.insert(ingredients.all[key].slice());
+        }
         this.setState({
           ingredients
         });
@@ -42,7 +64,99 @@ class App extends React.Component {
         console.log('err', err);
       }
     });
+  }
 
+  updateTrie(ingredients) {
+    let newTrie = new Trie();
+    for (let key in ingredients.all) {
+      newTrie.insert(ingredients.all[key].slice());
+    }
+    ingredients.Trie = newTrie;
+  }
+
+  updateServer(name = this.state.name) {
+    const data = {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      }
+
+    }
+    return fetch(`/addIngredient`, data);
+  }
+
+  onAddIngNameChange(name) {
+    this.setState({ name });
+  }
+
+  addIngredient(e) {
+    // let name = this.state.name;
+    console.log('changing name')
+    swal({
+        text: 'Add Ingredient',
+        button:
+        {
+          value: 'add',
+          text: 'add',
+          className: 'add add'
+        },
+        content: (
+          <AddIngModal onAddIngNameChange={this.onAddIngNameChange.bind(this)}
+                              ingredients={this.state.ingredients}
+                                    modal={this.state.modal.addIngredient}/>
+        )
+      })
+      .then(() => {
+        return this.updateServer();
+      })
+      .then((response) => response.json())
+      .then((json) => {
+        const { err, message, ingredients } = json;
+        if (err) {
+          swal({text: err, icon: 'warning', button: 'close'});
+        } else {
+          this.updateTrie(ingredients);
+          this.setState({ ingredients }, () => {
+            swal({
+              text: 'Ingredient Successfully Added',
+              icon: 'success',
+           buttons: {
+                      close: {
+                        value: 'close',
+                        className: 'add close'
+                      },
+                      addAnother: {
+                         text: 'Add Another?',
+                        value: 'addAnother',
+                        className: 'add another'
+                      }
+                    }
+                  })
+                .then((value) => {
+                  switch(value) {
+                    case 'close':
+                      swal.close();
+                      break;
+                    case 'addAnother':
+                      swal.close();
+                      this.addIngredient();
+                  }
+                });
+          });
+        }
+        return;
+      })
+      .catch((err) => {
+        console.log(err)
+        if (err) {
+          swal("Oh noes!", "The AJAX request failed!", "error");
+        } else {
+          swal.stopLoading();
+          swal.close();
+        }
+      });
   }
 
   getRecipes() {
@@ -123,19 +237,30 @@ class App extends React.Component {
   }
 
   render () {
+    const { addIngredient, itemChange, getRecipes, toggleRecipe, updateServer } = this;
+    const { ingredients, recipes, groceryList } = this.state;
     return (
       <div className='app-container'>
-        <img className='title' src="logo.png"></img>
+        <Header/>
         <div className="container">
-          <IngredientList onItemChange={this.itemChange.bind(this)}
-                              listName="Ingredients"
-                           ingredients={this.state.ingredients}
-                            getRecipes={this.getRecipes.bind(this)}/>
-          <Recipes recipes={this.state.recipes}
-               ingredients={this.state.ingredients}
-              toggleRecipe={this.toggleRecipe.bind(this)} />
-          <GroceryList  ingredients={this.state.ingredients}
-                               list={this.state.groceryList}/>
+          <IngredientList addIngredient={addIngredient}
+                           onItemChange={itemChange}
+                               listName="Ingredients"
+                            ingredients={ingredients}
+                             getRecipes={getRecipes}
+                           updateServer={updateServer}/>
+
+
+
+          <Recipes recipes={recipes}
+               ingredients={ingredients}
+              toggleRecipe={toggleRecipe} />
+
+
+
+
+          <GroceryList  ingredients={ingredients}
+                               list={groceryList}/>
         </div>
       </div>)
   }
