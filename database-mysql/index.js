@@ -1,12 +1,9 @@
 const mysql = require('mysql');
 const _ = require('underscore');
 const Promise = require('bluebird');
+const dbConfig = require('../database.config.js');
 
-const connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  database : 'refrigeratorducer'
-});
+const connection = mysql.createConnection(dbConfig);
 
 let ingredients;
 

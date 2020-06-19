@@ -15,55 +15,35 @@ Oh, and I also like to write press-releases in what I call "Oprah-speak" for mai
 
 Once the project moves into development, the press release can be used as a touchstone; a guiding light. The product team can ask themselves, "Are we building what is in the press release?" If they find they're spending time building things that aren't in the press release (overbuilding), they need to ask themselves why. This keeps product development focused on achieving the customer benefits and not building extraneous stuff that takes longer to build, takes resources to maintain, and doesn't provide real customer benefit (at least not enough to warrant inclusion in the press release).
  -->
+  # Re-Fridgerator-Ducer #
 
-## Heading ##
-  > Name the product in a way the reader (i.e. your target customers) will understand.
-
-  Re-fridgerator-ducer
-
-## Sub-Heading ##
-  > Describe who the market for the product is and what benefit they get. One sentence only underneath the title.
-
-  For people who want to cook at home but struggle coming up with interesting recipes based on what they have on hand.
+  *Recipe suggestion app based on ingredients someone has on hand.*
 
 ## Summary ##
-  > Give a summary of the product and the benefit. Assume the reader will not read anything else so make this paragraph good.
 
   Cooking at home is a great way to relax and saves money, but it can be a hassle to find recipes, compile the grocery list, go to the store and then actually cook everything before the perishables go bad. And you always forget that one thing at the store and have to go back during rush hour on a Friday, and then since you're already there you might as well check out Redbox and there's a bunch of kids sitting there debating between Spy Kids 12 and Lilo And Stitch 7 for 15 minutes, ugh!
 
-  "*I wish there was an easier way! I just want to chill with a glass and wine and cook something nice for me and my honey buns!*"
+  "*I wish there was an easier way! I just want to chill with a glass of wine and cook something nice for me and my honey buns!*"
 
-  Well now there is! With the handy dandy Re-fridgerator-ducer app, you can still cook at home while reduce food waste and eliminate excess trips to the grocery store. Simply look through your fridge/pantry, enter in as many items as you want into our app and voila, we will suggest recipes that we think you can cook with the ingredients you have on hand.
+  Well now there is! With the handy dandy Re-fridgerator-ducer app, you can cook a delicious meal at home while reducing food waste, saving money and eliminate excess trips to the grocery store. Simply look through your fridge/pantry, enter in as many items as you want into the app and voila, we will suggest recipes that we think you can cook with the ingredients you have on hand.
 
-## Problem ##
-  > Describe the problem your product solves.
+<!-- ## Problem ##
 
-  Cooking at home is a great way to relax and saves money, but it can be a hassle. You have to find recipes, compile the grocery list, go to the store and then actually cook everything before the perishables go bad. Trying to do this on a budget only adds to the complexity. Then you get to actually cooking the meal and you realize you forgot just one ingredient, throwing off the entire process and result in another pizza night. Nooooo, you were on a diet and doing so well! Shame! *ding* Shame!
+  Cooking at home is a great way to relax and save money, but sometimes it can be a hassle. You have to find recipes, compile the grocery list, go to the store and then actually cook everything before the perishables go bad. Trying to do this on a budget only adds to the complexity. Then you get to actually cooking the meal and you realize you forgot an ingredient, throwing off the entire process and result in another pizza night. Nooooo, you were on a diet and doing so well! Shame, *ding,* Shame!
 
 ## Solution ##
-  > Describe how your product elegantly solves the problem.
 
-  Coming up with a palatable dish based on what is in your kitchen can be difficult and time consuming, leading some to more expensive and less fulfilling meal choices. The customer knows they want to cook for themselves but there's a bit of legwork involved that can hold some people back. We offload that legwork so they can focus on enjoying the cooking process.
-
-## Quote from You ##
-  > A quote from a spokesperson in your company.
-
-  "I'm not only the spokesperson for this company, I'm also a client."
-
-  "You are going to like the way you eat, I guarantee it."
+  Coming up with a palatable dish based on what is in your kitchen can be difficult and time consuming, leading some to more expensive and less fulfilling meal choices. The customer knows they want to cook for themselves but there's a bit of legwork involved that can hold some people back. We offload that legwork so they can focus on enjoying the cooking process. -->
 
 ## How to Get Started ##
-  > Describe how easy it is to get started.
 
-  To get started, just fill in a couple basic ingredients you have available, set any dietary requirements you may have, and hit Submit. A list of possible recipes will be generated that you can choose from.
+  To get started, just fill in a couple basic ingredients you have available and hit 'Find Recipes'. A list of possible recipes will be generated that you can choose from, categorized by how many of the ingredients the user has indicated they have on hand.
 
-  It is possible that we won't be able to find recipes that only utilize ingredients you have provided. No one wants to put in every ingredient they have in their kitchen, right? In that case, the resulting recipes also include basic ingredients that we *think* you most likely have in your kitchen, i.e: salt, pepper, butter, olive oil, flour, etc.
+<!-- ## Customer Quote ##
 
-## Customer Quote ##
-  > Provide a quote from a hypothetical customer that describes how they experienced the benefit.
+  "I enjoy cooking but something always happens that messes up my plans. Sometimes that tomato that should have been good for a couple days goes bad sooner than expected, or I accidentally grabbed nutmeg instead of paprika at the store, again. I have 8 nutmegs in my pantry! So frustrating, I just want to cook a nice little meal! Re-Fridgerator-Ducer has helped me tremendously! No need for me to get stressed out when a little bump messes up my plans, changing course on the fly to another recipe has never been easier!" -->
 
-  "I enjoy cooking but something always happens that messes up my plans. Sometimes that tomato that should have been good for a couple days goes bad sooner than I expected, or I accidentally grabbed nutmeg instead of paprika at the store. I have 8 nutmegs in my pantry! So frustrating, I just want to cook a nice little meal! Re-Fridgerator-Ducer has helped me tremendously! No need for me to get stressed out when a little bump messes up my plans, changing course on the fly to another recipe has never been easier!"
+<!-- ## Closing and Call to Action ## -->
 
-## Closing and Call to Action ##
-  > Wrap it up and give pointers where the reader should go next.
+
 

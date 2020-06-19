@@ -7,7 +7,7 @@ import IngredientList from './components/IngredientList.jsx';
 import Recipes from './components/Recipes.jsx';
 import GroceryList from './components/GroceryList.jsx';
 import AddIngModal from './components/AddIngModal.jsx';
-import Header from './components/Header.jsx';
+import NavBar from './components/NavBar.jsx';
 import Trie from './components/Trie.js';
 
 class App extends React.Component {
@@ -241,7 +241,7 @@ class App extends React.Component {
     const { ingredients, recipes, groceryList } = this.state;
     return (
       <div className='app-container'>
-        <Header/>
+        <NavBar/>
         <div className="container">
           <IngredientList addIngredient={addIngredient}
                            onItemChange={itemChange}
@@ -249,16 +249,9 @@ class App extends React.Component {
                             ingredients={ingredients}
                              getRecipes={getRecipes}
                            updateServer={updateServer}/>
-
-
-
           <Recipes recipes={recipes}
                ingredients={ingredients}
               toggleRecipe={toggleRecipe} />
-
-
-
-
           <GroceryList  ingredients={ingredients}
                                list={groceryList}/>
         </div>
