@@ -2,7 +2,7 @@
 
 ![GIF demo](img/demo.gif)
 
-`Fridge Reducer` suggests recipes you can make with ingredients already in your kitchen, and suggests new recipes you can make with just a few more ingredients from the store. After selecting the recipes, a grocery list will be generated of what you need to go buy.
+`Fridge Reducer` is for when you want to cook at home and don't know what to make. It suggests dishes you can make with ingredients on hand as well as showing you what you *could* make with a quick trip to the store. Users can select recipes that seem appealing and a grocery list will be generated.
 
 ## Setup
 
