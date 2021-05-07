@@ -35,6 +35,6 @@
     "react-dom": "^16.13.1",
     "react-responsive-modal": "^5.0.2",
     "sweetalert": "^2.1.2",
-    "underscore": "^1.10.2"
+    "underscore": "^1.12.1"
   }
 }
